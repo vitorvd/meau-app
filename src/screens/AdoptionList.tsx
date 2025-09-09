@@ -2,7 +2,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function AdoptionScreen() {
+export default function ListAdoption() {
   const navigation = useNavigation();
 
   return (
@@ -26,7 +26,7 @@ function AnimalCard() {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("FinishAdoption" as never)}>
+    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("ConfirmAdoption" as never)}>
       <View style={animalStyle.header}>
         <Text style={animalStyle.headerText}>Brisa</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />

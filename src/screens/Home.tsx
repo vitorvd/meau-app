@@ -25,7 +25,7 @@ export default function Home() {
 
         <TouchableOpacity
           style={styles.yellowButton}
-          onPress={() => navigation.navigate('Adoption' as never)}
+          onPress={() => navigation.navigate('AdoptionList' as never)}
         >
           <Text style={styles.buttonText}>Adotar</Text>
         </TouchableOpacity>

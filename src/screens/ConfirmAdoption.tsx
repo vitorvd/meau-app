@@ -1,23 +1,14 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type RootStackParamList = {
-  Home: undefined;
-  Adoption: undefined;
-  FinishAdoption: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-export default function FinishAdoptionScreen() {
-  const navigation = useNavigation<NavigationProp>();
+export default function ConfirmAdoptionScreen() {
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={headerStyle.view}>
-        <TouchableOpacity onPress={() => navigation.navigate("Adoption")}>
+        <TouchableOpacity onPress={() => navigation.navigate("AdoptionList" as never)}>
           <MaterialIcons name="arrow-back" size={24} color="#434343" />
         </TouchableOpacity>
       </View>
