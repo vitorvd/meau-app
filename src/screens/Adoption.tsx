@@ -1,37 +1,37 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function AdoptionScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => router.push("/home")}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate("Home" as never)}>
           <MaterialIcons name="menu" size={24} color="#434343" />
         </TouchableOpacity>
         <Text style={headerStyle.text}>Adotar</Text>
         <MaterialIcons style={ [headerStyle.text, { textAlign: "right" }] } name="search" size={24} color="#434343" />
       </View>
       <View style={styles.container}>
-        <AnimalCard></AnimalCard>
-        <AnimalCard></AnimalCard>
-     </View>
+        <AnimalCard />
+        <AnimalCard />
+      </View>
     </SafeAreaView>
   );
 }
 
 function AnimalCard() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   return (
-    <TouchableOpacity style={animalStyle.card} onPress={() => {router.push("/finish-adoption")}}>
+    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("FinishAdoption" as never)}>
       <View style={animalStyle.header}>
         <Text style={animalStyle.headerText}>Brisa</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />
       </View>
-      <Image source={require('../assets/images/brisa.jpeg')} style={animalStyle.image} />
+      <Image source={require('../../assets/images/brisa.jpeg')} style={animalStyle.image} />
       <View style={{ paddingVertical: 20, justifyContent: "center", gap: 3, height: "20%" }}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingBottom: 3 }}>
           <Text style={animalStyle.footerText}>Fêmea</Text>
@@ -46,7 +46,7 @@ function AnimalCard() {
 
 const animalStyle = StyleSheet.create({
   card: {
-    width: "100%", // ocupa toda a largura disponível
+    width: "100%",
     height: 300,
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -75,7 +75,6 @@ const animalStyle = StyleSheet.create({
     width: "100%",
     height: "65%",
     resizeMode: "cover",
-
   },
   footerText: {
     textTransform: "uppercase",
@@ -85,7 +84,6 @@ const animalStyle = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     letterSpacing: 0.5
   }
-
 });
 
 const headerStyle = StyleSheet.create({

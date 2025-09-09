@@ -1,50 +1,50 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 export default function Home() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => router.push("/home")}>
+        <TouchableOpacity style={{ flex: 1 }}>
           <MaterialIcons name="menu" size={24} color="#88c9bf" />
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
         <Text style={styles.hello}>Olá!</Text>
 
-      <Text style={styles.welcome}>
-        Bem vindo ao Meau! {"\n"}
-        Aqui você pode adotar, doar e ajudar {"\n"}
-        cães e gatos com facilidade. {"\n"}
-        Qual o seu interesse?
-      </Text>
+        <Text style={styles.welcome}>
+          Bem vindo ao Meau! {"\n"}
+          Aqui você pode adotar, doar e ajudar {"\n"}
+          cães e gatos com facilidade. {"\n"}
+          Qual o seu interesse?
+        </Text>
 
-      <TouchableOpacity style={styles.yellowButton}
-        onPress={() => router.push("/adoption")}
-      >
-        <Text style={styles.buttonText}>Adotar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.yellowButton}
+          onPress={() => navigation.navigate('Adoption' as never)}
+        >
+          <Text style={styles.buttonText}>Adotar</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.yellowButton}>
-        <Text style={styles.buttonText}>Ajudar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.yellowButton}>
+          <Text style={styles.buttonText}>Ajudar</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.yellowButton}>
-        <Text style={styles.buttonText}>Cadastrar Animal</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.yellowButton}>
+          <Text style={styles.buttonText}>Cadastrar Animal</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.oceanBlueButton}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.oceanBlueButton}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
 
-      <Image
-        // style={styles.stretch}
-        source={require('../assets/images/meau-letter-logo.png')}
-      />  
+        <Image
+          source={require('../../assets/images/meau-letter-logo.png')}
+        />  
       </View>
     </SafeAreaView>
   );
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   container: {
-    flex: 1, // ocupa a tela inteira
+    flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
@@ -99,14 +99,14 @@ const styles = StyleSheet.create({
   hello: {
     fontSize: 72,
     color: "#ffd358",
-    fontFamily: "Courgette-Regular", // precisa estar carregada via expo-font
+    fontFamily: "Courgette-Regular",
     marginBottom: 52,
   },
   welcome: {
     fontSize: 16,
     color: "#757575",
     textAlign: "center",
-    fontFamily: "Roboto-Regular", // precisa estar carregada via expo-font
+    fontFamily: "Roboto-Regular",
     marginBottom: 48,
   },
   question: {
