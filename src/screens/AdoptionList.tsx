@@ -7,13 +7,6 @@ export default function ListAdoption() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate("Home" as never)}>
-          <MaterialIcons name="menu" size={24} color="#434343" />
-        </TouchableOpacity>
-        <Text style={headerStyle.text}>Adotar</Text>
-        <MaterialIcons style={ [headerStyle.text, { textAlign: "right" }] } name="search" size={24} color="#434343" />
-      </View>
       <View style={styles.container}>
         <AnimalCard />
         <AnimalCard />

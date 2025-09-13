@@ -1,4 +1,3 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
@@ -8,11 +7,6 @@ export default function Home() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }}>
-          <MaterialIcons name="menu" size={24} color="#88c9bf" />
-        </TouchableOpacity>
-      </View>
       <View style={styles.container}>
         <Text style={styles.hello}>Olá!</Text>
 
