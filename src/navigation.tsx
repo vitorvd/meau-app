@@ -3,7 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AdoptionScreen from './screens/AdoptionList';
 import ConfirmAdoptionScreen from './screens/ConfirmAdoption';
+import ConfirmedRegisterAnimalScreen from './screens/ConfirmedRegisterAnimal';
 import Home from './screens/Home';
+import RegisterAnimal from './screens/RegisterAnimal';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,7 +38,7 @@ export default function Navigation() {
               backgroundColor: '#ffd358',
             },
             headerLeft: () => (
-              <MaterialIcons name="menu" size={28} color="#434343" onPress={() => navigation.navigate("Home" as never)} />
+              <MaterialIcons name="menu" size={28} color="#434343" onPress={() => navigation.navigate("Home")} />
             ),
             headerRight: () => (
               <MaterialIcons name="search" size={28} color="#434343" />
@@ -50,6 +52,32 @@ export default function Navigation() {
             headerTitle: 'Adoção Confirmada',
             headerStyle: {
               backgroundColor: '#cfe9e5',
+            },
+            headerLeft: () => (
+              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
+            ),
+          })}
+        />
+        <Stack.Screen 
+          name="RegisterAnimal" 
+          component={RegisterAnimal} 
+          options={({ navigation }) => ({ 
+            headerTitle: 'Cadastrar Animal',
+            headerStyle: {
+              backgroundColor: '#ffd358',
+            },
+            headerLeft: () => (
+              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
+            ),
+          })}
+        />
+        <Stack.Screen 
+          name="ConfirmedRegisterAnimal" 
+          component={ConfirmedRegisterAnimalScreen} 
+          options={({ navigation }) => ({ 
+            headerTitle: 'Cadastro do animal',
+            headerStyle: {
+              backgroundColor: '#ffd358',
             },
             headerLeft: () => (
               <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />

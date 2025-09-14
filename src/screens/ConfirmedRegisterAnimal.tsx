@@ -3,25 +3,26 @@ import { StatusBar, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Confirmed from "../components/Confirmed";
 
-export default function ConfirmAdoptionScreen() {
+export default function ConfirmedRegisterAnimalScreen() {
   const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
       <Confirmed
         title="Oba!"
-        buttonText="Compartilhar"
-        styleType="oceanBlue"
+        buttonText="Meus Pets"
+        styleType="yellow"
         text={
             `
-Ficamos muito felizes com o sucesso 
-do seu processo! Esperamos que o  
-bichinho esteja curtindo muito essa  
-nova experiência! 
+O cadastro do seu pet foi realizado
+com sucesso! 
 
-Agora que tal compartilhar a história 
-da Brisa com todos os outros 
-membros do Meau?
+Certifique-se que permitiu o envio de 
+notificações por push no campo
+privacidade do menu configurações do
+aplicativo. Assim, poderemos te avisar
+assim que alguém interessado entrar
+em contato!
             `
           }
       />
@@ -32,7 +33,7 @@ membros do Meau?
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fafafa",
     paddingTop: StatusBar.currentHeight,
   },
 });

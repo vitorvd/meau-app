@@ -3,8 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function ListAdoption() {
-  const navigation = useNavigation();
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -77,32 +75,6 @@ const animalStyle = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     letterSpacing: 0.5
   }
-});
-
-const headerStyle = StyleSheet.create({
-  view: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#ffd358",
-    padding: 20,
-    width: "100%",
-    height: 60,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    zIndex: 1,
-    position: 'relative',
-  },
-  text: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 20,
-    color: "#434343",
-    fontFamily: "Roboto-Medium",
-  },
 });
 
 const styles = StyleSheet.create({
