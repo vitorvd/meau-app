@@ -53,7 +53,7 @@ export default function RegisterUserScreen() {
         <Text style={styles.subTitle}>Informações pessoais</Text>
         { 
           inputsPersonalData.map((inputData: InputData) => (
-            <Input name={inputData.name} placeholder={inputData.placeholder} control={control}            
+            <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}            
             />
           ))
         }
@@ -61,7 +61,7 @@ export default function RegisterUserScreen() {
         <Text style={styles.subTitle}>Informações de perfil</Text>
         { 
           inputsProfileData.map((inputData: InputData) => (
-            <Input name={inputData.name} placeholder={inputData.placeholder} control={control}            
+            <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}            
             />
           ))
         }

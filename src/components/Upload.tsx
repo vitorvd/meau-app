@@ -1,3 +1,4 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, TextStyle, View } from "react-native";
@@ -19,6 +20,7 @@ export default function Upload({text, label, styleType}: Prop) {
         <Text style={textStyle}>{label}</Text>
       </View>
       <View style={styles.uploadContainer}>
+        <MaterialIcons name="add-circle" size={14} color="#434343" />
         <Text style={styles.text}>{text}</Text>
       </View>
     </View>

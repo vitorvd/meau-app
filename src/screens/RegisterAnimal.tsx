@@ -13,6 +13,7 @@ import Button from "../components/Button";
 import CheckboxGroup from "../components/CheckboxGroup";
 import Input from "../components/Input";
 import RadioGroup from "../components/RadioGroup";
+import Upload from "../components/Upload";
 
 export default function RegisterAnimal() {
   const navigation = useNavigation();
@@ -95,7 +96,13 @@ function BaseForm({control}: any) {
       control={control}
       label="Nome do animal"
       placeholder="Nome do animal" />
-      
+
+    <Upload
+      label="Fotos do animal"
+      text="adicionar foto"
+      styleType="yellow"
+    />
+    
     <RadioGroup
       name="especie"
       control={control}

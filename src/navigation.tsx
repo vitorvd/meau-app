@@ -27,7 +27,7 @@ export default function Navigation() {
             headerTitle: '',
             headerStyle: { backgroundColor: '#fff' },
             headerLeft: () => (
-              <MaterialIcons name="menu" size={28} color="#88c9bf" />
+              <MaterialIcons name="menu" size={24} color="#88c9bf" />
             ),
            })}
         />
@@ -40,10 +40,10 @@ export default function Navigation() {
               backgroundColor: '#ffd358',
             },
             headerLeft: () => (
-              <MaterialIcons name="menu" size={28} color="#434343" onPress={() => navigation.navigate("Home")} />
+              <MaterialIcons name="menu" size={24} color="#434343" onPress={() => navigation.navigate("Home")} />
             ),
             headerRight: () => (
-              <MaterialIcons name="search" size={28} color="#434343" />
+              <MaterialIcons name="search" size={24} color="#434343" />
             ),
           })}
         />
