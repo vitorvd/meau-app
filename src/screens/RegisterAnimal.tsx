@@ -305,22 +305,5 @@ const formStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Roboto-Medium",
     color: "#434343",
-  },
-  inputLabelTitle: {
-    fontSize: 14,
-    fontFamily: "Roboto-Regular",
-    color: "#f7a800",
-    paddingBottom: 1,
-  },
-  input: {
-    outline: "none",
-    fontSize: 12,
-    paddingVertical: 8,
-    paddingBottom: 4,
-    width: "100%",
-    height: 40,
-    color: "#333",
-    borderBottomColor: "#dfdfdfff",
-    borderBottomWidth: 1,
-  },
+  }
 });

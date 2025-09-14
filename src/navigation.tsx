@@ -5,7 +5,9 @@ import AdoptionScreen from './screens/AdoptionList';
 import ConfirmAdoptionScreen from './screens/ConfirmAdoption';
 import ConfirmedRegisterAnimalScreen from './screens/ConfirmedRegisterAnimal';
 import Home from './screens/Home';
+import LoginOrRegisterScreen from './screens/LoginOrRegister';
 import RegisterAnimal from './screens/RegisterAnimal';
+import RegisterUserScreen from './screens/RegisterUser';
 
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +83,32 @@ export default function Navigation() {
             },
             headerLeft: () => (
               <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
+            ),
+          })}
+        />
+        <Stack.Screen 
+          name="NotAuthorizared" 
+          component={LoginOrRegisterScreen} 
+          options={({ navigation }) => ({ 
+            headerTitle: 'Acesso negado',
+            headerStyle: {
+              backgroundColor: '#88c9bf',
+            },
+            headerLeft: () => (
+              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
+            ),
+          })}
+        />
+        <Stack.Screen 
+          name="RegisterUser" 
+          component={RegisterUserScreen} 
+          options={({ navigation }) => ({ 
+            headerTitle: 'Cadastro Pessoal',
+            headerStyle: {
+              backgroundColor: '#88c9bf',
+            },
+            headerLeft: () => (
+              <MaterialIcons name="menu" size={24} color="#434343"  onPress={() => navigation.goBack()} />
             ),
           })}
         />

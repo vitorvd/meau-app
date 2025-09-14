@@ -16,7 +16,7 @@ type Props = {
 
 export default function Input({ name, control, label, placeholder }: Props) {
   return (
-    <View>
+    <View style={{width: "100%"}}>
         {label && (
           <Text style={style.inputLabelTitle}>{label}</Text>
         )}

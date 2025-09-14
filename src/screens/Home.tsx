@@ -24,7 +24,10 @@ export default function Home() {
           <Text style={styles.buttonText}>Adotar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.yellowButton}>
+        <TouchableOpacity
+          style={styles.yellowButton}
+          onPress={() => navigation.navigate('NotAuthorizared' as never)}
+        >
           <Text style={styles.buttonText}>Ajudar</Text>
         </TouchableOpacity>
 
