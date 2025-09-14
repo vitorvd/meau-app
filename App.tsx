@@ -2,7 +2,10 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { enableScreens } from 'react-native-screens';
 import Navigation from './src/navigation';
+
+enableScreens();
 
 export default function App() {
   const [fontsLoaded] = useFonts({

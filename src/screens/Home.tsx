@@ -1,4 +1,3 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
@@ -8,11 +7,6 @@ export default function Home() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }}>
-          <MaterialIcons name="menu" size={24} color="#88c9bf" />
-        </TouchableOpacity>
-      </View>
       <View style={styles.container}>
         <Text style={styles.hello}>Olá!</Text>
 
@@ -34,7 +28,10 @@ export default function Home() {
           <Text style={styles.buttonText}>Ajudar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.yellowButton}>
+        <TouchableOpacity 
+          style={styles.yellowButton}
+          onPress={() => navigation.navigate('RegisterAnimal' as never)}
+        >
           <Text style={styles.buttonText}>Cadastrar Animal</Text>
         </TouchableOpacity>
 
@@ -49,26 +46,6 @@ export default function Home() {
     </SafeAreaView>
   );
 }
-
-const headerStyle = StyleSheet.create({
-  view: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    backgroundColor: "#fff",
-    padding: 20,
-    width: "100%",
-    height: 60,
-    position: 'relative',
-  },
-  text: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 20,
-    color: "#434343",
-    fontFamily: "Roboto-Medium",
-  },
-});
 
 const baseButtonStyle: ViewStyle = {
   width: 232,

@@ -3,17 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function ListAdoption() {
-  const navigation = useNavigation();
-
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={headerStyle.view}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate("Home" as never)}>
-          <MaterialIcons name="menu" size={24} color="#434343" />
-        </TouchableOpacity>
-        <Text style={headerStyle.text}>Adotar</Text>
-        <MaterialIcons style={ [headerStyle.text, { textAlign: "right" }] } name="search" size={24} color="#434343" />
-      </View>
       <View style={styles.container}>
         <AnimalCard />
         <AnimalCard />
@@ -84,32 +75,6 @@ const animalStyle = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     letterSpacing: 0.5
   }
-});
-
-const headerStyle = StyleSheet.create({
-  view: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#ffd358",
-    padding: 20,
-    width: "100%",
-    height: 60,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    zIndex: 1,
-    position: 'relative',
-  },
-  text: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 20,
-    color: "#434343",
-    fontFamily: "Roboto-Medium",
-  },
 });
 
 const styles = StyleSheet.create({
