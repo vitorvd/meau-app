@@ -48,9 +48,9 @@ const baseButtonStyle: ViewStyle = {
   justifyContent: "center",
   alignItems: "center",
   shadowColor: "#000",
-  shadowOffset: { width: 0, height: 1 },
+  shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.25,
-  shadowRadius: 2,
+  shadowRadius: 3,
 };
 
 const styles = StyleSheet.create({
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 12,
-    color: "#434343",
+    color: " rgba(67, 67, 67, 0.8)",
     textTransform: "uppercase",
-    fontFamily: "Roboto-Medium",
+    fontFamily: "Roboto-Regular",
   },
 });

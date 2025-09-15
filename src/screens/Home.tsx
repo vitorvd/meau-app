@@ -1,54 +1,67 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Image, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../components/Button";
 
 export default function Home() {
   const navigation = useNavigation();
 
+  const handleAdoptionList = () => {
+    navigation.navigate('AdoptionList' as never)
+  }
+
+  const handleAjudar = () => {
+    navigation.navigate('NotAuthorizared' as never)
+  }
+
+  const handleRegisterAnimal = () => {
+    navigation.navigate('RegisterAnimal' as never)
+  }
+
+  const handleLogin = () => {
+    navigation.navigate('Login' as never)
+  }
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.hello}>Olá!</Text>
+    <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
+      <Text style={styles.hello}>Olá!</Text>
 
-        <Text style={styles.welcome}>
-          Bem vindo ao Meau! {"\n"}
-          Aqui você pode adotar, doar e ajudar {"\n"}
-          cães e gatos com facilidade. {"\n"}
-          Qual o seu interesse?
-        </Text>
+      <Text style={styles.welcome}>
+        Bem vindo ao Meau! {"\n"}
+        Aqui você pode adotar, doar e ajudar {"\n"}
+        cães e gatos com facilidade. {"\n"}
+        Qual o seu interesse?
+      </Text>
 
-        <TouchableOpacity
-          style={styles.yellowButton}
-          onPress={() => navigation.navigate('AdoptionList' as never)}
-        >
-          <Text style={styles.buttonText}>Adotar</Text>
-        </TouchableOpacity>
+      <View style={styles.viewGroupButton}>
+        <Button
+          text="Adotar"
+          type="yellow"
+          onPress={handleAdoptionList}
+        />
 
-        <TouchableOpacity
-          style={styles.yellowButton}
-          onPress={() => navigation.navigate('NotAuthorizared' as never)}
-        >
-          <Text style={styles.buttonText}>Ajudar</Text>
-        </TouchableOpacity>
+        <Button
+          text="Ajudar"
+          type="yellow"
+          onPress={handleAjudar}
+        />
 
-        <TouchableOpacity 
-          style={styles.yellowButton}
-          onPress={() => navigation.navigate('RegisterAnimal' as never)}
-        >
-          <Text style={styles.buttonText}>Cadastrar Animal</Text>
-        </TouchableOpacity>
+        <Button
+          text="Cadastrar Animal"
+          type="yellow"
+          onPress={handleRegisterAnimal}
+        />
 
-        <TouchableOpacity
-          style={styles.oceanBlueButton}
-          onPress={() => navigation.navigate('Login' as never)}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        <Image
-          source={require('../../assets/images/meau-letter-logo.png')}
-        />  
+        <Button
+          text="Login"
+          type="oceanBlue"
+          onPress={handleLogin}
+        />
       </View>
+      <Image
+        source={require('../../assets/images/meau-letter-logo.png')}
+      />  
     </SafeAreaView>
   );
 }
@@ -114,4 +127,7 @@ const styles = StyleSheet.create({
     color: " rgba(67, 67, 67, 0.8)",
     textTransform: "uppercase",
   },
+  viewGroupButton: {
+    gap: 15
+  }
 });

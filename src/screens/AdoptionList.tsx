@@ -1,14 +1,19 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ListAdoption() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <AnimalCard />
         <AnimalCard />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -78,16 +83,16 @@ const animalStyle = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   container: {
     flex: 1,
-    alignItems: "center", 
-    justifyContent: "flex-start",
     backgroundColor: "#fff",
-    width: "100%",
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    flexGrow: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "flex-start",
     paddingHorizontal: 25,
     paddingVertical: 30,
     gap: 25,
