@@ -5,6 +5,7 @@ import AdoptionScreen from './screens/AdoptionList';
 import ConfirmAdoptionScreen from './screens/ConfirmAdoption';
 import ConfirmedRegisterAnimalScreen from './screens/ConfirmedRegisterAnimal';
 import Home from './screens/Home';
+import LoginScreen from './screens/Login';
 import LoginOrRegisterScreen from './screens/LoginOrRegister';
 import RegisterAnimal from './screens/RegisterAnimal';
 import RegisterUserScreen from './screens/RegisterUser';
@@ -104,6 +105,19 @@ export default function Navigation() {
           component={RegisterUserScreen} 
           options={({ navigation }) => ({ 
             headerTitle: 'Cadastro Pessoal',
+            headerStyle: {
+              backgroundColor: '#88c9bf',
+            },
+            headerLeft: () => (
+              <MaterialIcons name="menu" size={24} color="#434343"  onPress={() => navigation.goBack()} />
+            ),
+          })}
+        />
+        <Stack.Screen 
+          name="Login" 
+          component={LoginScreen} 
+          options={({ navigation }) => ({ 
+            headerTitle: 'Login',
             headerStyle: {
               backgroundColor: '#88c9bf',
             },

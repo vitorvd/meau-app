@@ -38,7 +38,10 @@ export default function Home() {
           <Text style={styles.buttonText}>Cadastrar Animal</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.oceanBlueButton}>
+        <TouchableOpacity
+          style={styles.oceanBlueButton}
+          onPress={() => navigation.navigate('Login' as never)}
+        >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 

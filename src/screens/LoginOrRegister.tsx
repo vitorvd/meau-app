@@ -11,6 +11,10 @@ export default function LoginOrRegisterScreen() {
     navigation.navigate("RegisterUser" as never)
   }
 
+  const handleLogin = () => {
+    navigation.navigate("Login" as never)
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
       <Text style={styles.title}>Ops!</Text>
@@ -24,6 +28,7 @@ export default function LoginOrRegisterScreen() {
       <Button
         text="Fazer Login"
         type="oceanBlue"
+        onPress={handleLogin}
       />
     </SafeAreaView>
   );
