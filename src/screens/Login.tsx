@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { StatusBar, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { auth } from '../config/firebaseConfig';
 
 type InputData = {
   name: string;
@@ -12,8 +14,8 @@ type InputData = {
 }
 
 const inputsData = [
-  {name: "nomeUsuario", placeholder: "Nome de usuário "},
-  {name: "senha", placeholder: "Senha"},
+  { name: "email", placeholder: "E-mail" },
+  { name: "senha", placeholder: "Senha" },
 ]
 
 export default function LoginScreen() {
@@ -26,25 +28,36 @@ export default function LoginScreen() {
   } = useForm();
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
 
-  const sendForm = () => { 
+  const handleSignIn: SubmitHandler<any> = async (data) => {
+    try {
+      console.log("Autenticando com o usuário:", data.email);
+      await signInWithEmailAndPassword(auth, data.email, data.senha);
+      console.log("Usuário %s logado com sucesso!", data.email);
+    } catch (error: any) {
+      console.error("Login com erro!", error.code, error.message);
+      alert("Falha no login: verifique seu e-mail e senha.");
+    }
+  };
+
+  const sendForm = () => {
     handleSubmit(onSubmit)();
     navigation.navigate("Home" as never);
   }
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
-        { 
-            inputsData.map((inputData: InputData) => (
-            <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}            
-            />
-            ))
-        }
+      {
+        inputsData.map((inputData: InputData) => (
+          <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}
+          />
+        ))
+      }
 
-        <Button
-            text="Entrar"
-            type="oceanBlue"
-            onPress={sendForm}
-        />
+      <Button
+        text="Entrar"
+        type="oceanBlue"
+        onPress={handleSubmit(handleSignIn)}
+      />
     </SafeAreaView>
   );
 }
