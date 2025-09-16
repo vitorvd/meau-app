@@ -33,16 +33,13 @@ export default function LoginScreen() {
       console.log("Autenticando com o usuário:", data.email);
       await signInWithEmailAndPassword(auth, data.email, data.senha);
       console.log("Usuário %s logado com sucesso!", data.email);
+      //handleSubmit(onSubmit)();
+      navigation.navigate("Home" as never);
     } catch (error: any) {
       console.error("Login com erro!", error.code, error.message);
       alert("Falha no login: verifique seu e-mail e senha.");
     }
   };
-
-  const sendForm = () => {
-    handleSubmit(onSubmit)();
-    navigation.navigate("Home" as never);
-  }
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
@@ -57,6 +54,7 @@ export default function LoginScreen() {
         text="Entrar"
         type="oceanBlue"
         onPress={handleSubmit(handleSignIn)}
+        containerStyle={{marginVertical: 30}}
       />
     </SafeAreaView>
   );
@@ -66,19 +64,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: StatusBar.currentHeight,
-  },
-  scrollView: {
+    paddingTop: StatusBar.currentHeight ?? 0 + 15,
     justifyContent: "flex-start",
     alignItems: "center",
     gap: 10,
-    paddingHorizontal: 20,
-  },
-  subTitle: {
-    paddingTop: 28,
-    color: "#88c9bf",
-    fontSize: 14,
-    fontFamily: "Roboto-Regular",
-    width: "100%",
+    paddingHorizontal: 30,
   },
 });
