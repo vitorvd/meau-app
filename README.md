@@ -1,15 +1,16 @@
 # Meau App
 
-## Get started
+## Primeiros passos
 
-1. Install dependencies
+1. Instalando as dependências
    ```bash
-   npm install
+   $ npm install
    ```
 
-2. Start the app
+2. Inicialize a app
 
    ```bash
-   #to run app in web
-   npm run web 
+   #Para rodar o projeto, use o comando abaixo
+   #Também é possível navegar pela web, acessando a url http://localhost:8081
+   $ npm run start
    ```

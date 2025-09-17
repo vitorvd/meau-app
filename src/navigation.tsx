@@ -1,6 +1,7 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { BackButton } from './components/ArrowBack';
+import { headerStyles } from './constants/global.styles';
 import AdoptionScreen from './screens/AdoptionList';
 import ConfirmAdoptionScreen from './screens/ConfirmAdoption';
 import ConfirmedRegisterAnimalScreen from './screens/ConfirmedRegisterAnimal';
@@ -10,123 +11,65 @@ import LoginOrRegisterScreen from './screens/LoginOrRegister';
 import RegisterAnimal from './screens/RegisterAnimal';
 import RegisterUserScreen from './screens/RegisterUser';
 
-const Stack = createNativeStackNavigator();
+type ScreenType = {
+  name: string;
+  component: React.ComponentType<any>;
+  label?: string;
+  headerTitle: string;
+  style: HeaderStyleKey;  // <-- agora só aceita white | yellow | green | lightGreen
+  back?: boolean;
+}
+
+type HeaderStyleKey = keyof typeof headerStyles;
+
+const Drawer = createDrawerNavigator();
+
+const visibleScreens: ScreenType[] = [
+  { name: "Home", component: Home, label: "Início", headerTitle: "", style: "white" },
+  { name: "AdoptionList", component: AdoptionScreen, label: "Lista de adoção", headerTitle: "Adotar", style: "yellow" },
+  { name: "RegisterAnimal", component: RegisterAnimal, label: "Cadastrar Animal", headerTitle: "Cadastrar Animal", style: "yellow", back: true },
+  { name: "RegisterUser", component: RegisterUserScreen, label: "Registrar-se", headerTitle: "Registrar-se", style: "blueOcean" },
+  { name: "Login", component: LoginScreen, label: "Login", headerTitle: "Login", style: "blueOcean" },
+];
+
+const hiddenScreens: ScreenType[] = [
+  { name: "ConfirmAdoption", component: ConfirmAdoptionScreen, headerTitle: "Adoção Confirmada", style: "lightGreen", back: true },
+  { name: "ConfirmedRegisterAnimal", component: ConfirmedRegisterAnimalScreen, headerTitle: "", style: "yellow", back: true },
+  { name: "NotAuthorizared", component: LoginOrRegisterScreen, headerTitle: "Acesso negado", style: "blueOcean", back: true },
+];
 
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Home"
-        screenOptions={{ 
-          headerStyle: { backgroundColor: '#fff' }
-        }}
-      >
-        <Stack.Screen 
-          name="Home"
-          component={Home}
-          options={() => ({ 
-            headerTitle: '',
-            headerStyle: { backgroundColor: '#fff' },
-            headerLeft: () => (
-              <MaterialIcons name="menu" size={24} color="#88c9bf" />
-            ),
-           })}
-        />
-        <Stack.Screen
-          name="AdoptionList"
-          component={AdoptionScreen}
-          options={({ navigation }) => ({ 
-            headerTitle: 'Adotar',
-            headerStyle: {
-              backgroundColor: '#ffd358',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="menu" size={24} color="#434343" onPress={() => navigation.navigate("Home")} />
-            ),
-            headerRight: () => (
-              <MaterialIcons name="search" size={24} color="#434343" />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="ConfirmAdoption" 
-          component={ConfirmAdoptionScreen} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Adoção Confirmada',
-            headerStyle: {
-              backgroundColor: '#cfe9e5',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="RegisterAnimal" 
-          component={RegisterAnimal} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Cadastrar Animal',
-            headerStyle: {
-              backgroundColor: '#ffd358',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="ConfirmedRegisterAnimal" 
-          component={ConfirmedRegisterAnimalScreen} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Cadastro do animal',
-            headerStyle: {
-              backgroundColor: '#ffd358',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="NotAuthorizared" 
-          component={LoginOrRegisterScreen} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Acesso negado',
-            headerStyle: {
-              backgroundColor: '#88c9bf',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="arrow-back" size={24} color="#434343" onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="RegisterUser" 
-          component={RegisterUserScreen} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Cadastro Pessoal',
-            headerStyle: {
-              backgroundColor: '#88c9bf',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="menu" size={24} color="#434343"  onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen} 
-          options={({ navigation }) => ({ 
-            headerTitle: 'Login',
-            headerStyle: {
-              backgroundColor: '#88c9bf',
-            },
-            headerLeft: () => (
-              <MaterialIcons name="menu" size={24} color="#434343"  onPress={() => navigation.goBack()} />
-            ),
-          })}
-        />
-      </Stack.Navigator>
+      <Drawer.Navigator initialRouteName="Home" screenOptions={{ headerShown: true }}>
+        {visibleScreens.map(({ name, component, label, headerTitle, style, back }) => (
+          <Drawer.Screen
+            key={name}
+            name={name}
+            component={component}
+            options={{
+              drawerLabel: label,
+              headerTitle,
+              headerStyle: headerStyles[style],
+              ...(back && { headerLeft: () => <BackButton /> }),
+            }}
+          />
+        ))}
+
+        {hiddenScreens.map(({ name, component, headerTitle, style, back }) => (
+          <Drawer.Screen
+            key={name}
+            name={name}
+            component={component}
+            options={{
+              drawerItemStyle: { display: "none" },
+              headerTitle,
+              headerStyle: headerStyles[style],
+              ...(back && { headerLeft: () => <BackButton /> }),
+            }}
+          />
+        ))}
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 }
