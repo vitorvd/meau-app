@@ -30,10 +30,7 @@ export default function LoginScreen() {
 
   const handleSignIn: SubmitHandler<any> = async (data) => {
     try {
-      console.log("Autenticando com o usuário:", data.email);
       await signInWithEmailAndPassword(auth, data.email, data.senha);
-      console.log("Usuário %s logado com sucesso!", data.email);
-      //handleSubmit(onSubmit)();
       navigation.navigate("Home" as never);
     } catch (error: any) {
       console.error("Login com erro!", error.code, error.message);

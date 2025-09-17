@@ -3,24 +3,23 @@ import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
   const navigation = useNavigation();
+  const { user, loading, logout } = useAuth();
 
   const handleAdoptionList = () => {
     navigation.navigate('AdoptionList' as never)
-  }
-
-  const handleAjudar = () => {
-    navigation.navigate('NotAuthorizared' as never)
   }
 
   const handleRegisterAnimal = () => {
     navigation.navigate('RegisterAnimal' as never)
   }
 
-  const handleLogin = () => {
-    navigation.navigate('Login' as never)
+  const handleLogout = async () => {
+    await logout()
+    navigation.navigate('NotAuthorizared' as never)
   }
 
   return (
@@ -42,21 +41,15 @@ export default function Home() {
         />
 
         <Button
-          text="Ajudar"
-          type="yellow"
-          onPress={handleAjudar}
-        />
-
-        <Button
           text="Cadastrar Animal"
           type="yellow"
           onPress={handleRegisterAnimal}
         />
 
         <Button
-          text="Login"
+          text={'Sair'}
           type="oceanBlue"
-          onPress={handleLogin}
+          onPress={handleLogout}
         />
       </View>
       <Image
