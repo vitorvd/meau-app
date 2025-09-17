@@ -37,36 +37,10 @@ export default function RegisterAnimal() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.comumText}>
-          Tenho interesse em cadastrar o animal para:
-        </Text>
-
-        <View style={styles.viewGroupButton}>
-          <Button
-            text="Adoção"
-            type="gray"
-            buttonStyle={{width: 96}}
-          />
-          <Button
-            text="Apadrinhar"
-            type="yellow"
-            buttonStyle={{width: 96}}
-          />
-          <Button
-            text="Ajuda"
-            type="gray"
-            buttonStyle={{width: 96}}
-          />
-        </View>
-
         <View style={formStyles.container}>
           <BaseForm control={control}/>
 
-          <ApadrinhamentoSection control={control}/>
-
           <AdocaoSection control={control}/>
-
-          <AjudaSection control={control}/>
 
           <Input
             name="sobreAnimal"
@@ -181,37 +155,6 @@ function BaseForm({control}: any) {
   </>
 }
 
-function ApadrinhamentoSection({control}: any) {
-  return <>
-    <CheckboxGroup
-      name="exigenciaApadrinhamento"
-      control={control}
-      label="Exigências para apadrinhamento"
-      options={[
-        {
-          label: "Termo de apadrinhamento",
-          value: "termoApadrinhamento",
-        },
-        {
-          label: "Auxílio financeiro",
-          value: "auxiliofinanceiro",
-          extraComponent: 
-            <CheckboxGroup
-              name="tipoAuxilio"
-              control={control}
-              options={[
-                { label: "Alimentação", value: "alimentacao" },
-                { label: "Saúde", value: "saude" },
-                { label: "Objetos", value: "objetos" },
-              ]}
-            />,
-        },
-        { label: "Visitas ao animal", value: "visitasAnimal" },
-      ]}
-    />
-  </>
-}
-
 function AdocaoSection({control}: any) {
   return <>
     <CheckboxGroup
@@ -287,19 +230,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginHorizontal: 24,
-  },
-  comumText: {
-    fontSize: 14,
-    color: "#757575",
-    marginVertical: 16,
-    fontFamily: "Roboto-Regular",
-    width: "100%",
-  },
-  viewGroupButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
+  }
 });
 
 const formStyles = StyleSheet.create({

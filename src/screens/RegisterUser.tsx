@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ScrollView, StatusBar, StyleSheet, Text } from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -50,6 +50,14 @@ export default function RegisterUserScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        <View style={styles.warningContainer}>
+          <Text style={styles.warningText}>
+            As informações preenchidas serão divulgadas 
+            apenas para a pessoa com a qual você realizar
+            o processo de adoção e/ou apadrinhamento,
+            após a formalização do processo.
+          </Text>
+        </View>
         <Text style={styles.subTitle}>Informações pessoais</Text>
         { 
           inputsPersonalData.map((inputData: InputData) => (
@@ -93,6 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     paddingHorizontal: 20,
+    paddingVertical: 16
   },
   subTitle: {
     paddingTop: 28,
@@ -101,4 +110,16 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     width: "100%",
   },
+  warningContainer: {
+    backgroundColor: "#cfe9e5",
+    width: "100%",
+    paddingVertical: 10,
+    paddingHorizontal: 8
+  },
+  warningText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 14,
+    color: "#434343",
+    textAlign: "center"
+  }
 });

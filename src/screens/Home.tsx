@@ -1,26 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
   const navigation = useNavigation();
+  const { user, loading, logout } = useAuth();
 
   const handleAdoptionList = () => {
     navigation.navigate('AdoptionList' as never)
-  }
-
-  const handleAjudar = () => {
-    navigation.navigate('NotAuthorizared' as never)
   }
 
   const handleRegisterAnimal = () => {
     navigation.navigate('RegisterAnimal' as never)
   }
 
-  const handleLogin = () => {
-    navigation.navigate('Login' as never)
+  const handleLogout = async () => {
+    await logout()
+    navigation.navigate('NotAuthorizared' as never)
   }
 
   return (
@@ -42,21 +41,15 @@ export default function Home() {
         />
 
         <Button
-          text="Ajudar"
-          type="yellow"
-          onPress={handleAjudar}
-        />
-
-        <Button
           text="Cadastrar Animal"
           type="yellow"
           onPress={handleRegisterAnimal}
         />
 
         <Button
-          text="Login"
+          text={'Sair'}
           type="oceanBlue"
-          onPress={handleLogin}
+          onPress={handleLogout}
         />
       </View>
       <Image
@@ -66,25 +59,7 @@ export default function Home() {
   );
 }
 
-const baseButtonStyle: ViewStyle = {
-  width: 232,
-  height: 40,
-  borderWidth: 2,
-  borderRadius: 5,
-  justifyContent: "center",
-  alignItems: "center",
-  marginVertical: 12,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
-};
-
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -109,23 +84,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#88c9bf",
     marginBottom: 32,
-  },
-  yellowButton: {
-    ...baseButtonStyle,
-    borderColor: "#ffd358",
-    backgroundColor: "#ffd358",
-    fontFamily: "Roboto-Regular",
-  },
-  oceanBlueButton: {
-    ...baseButtonStyle,
-    borderColor: "#88c9bf",
-    backgroundColor: "#88c9bf",
-    fontFamily: "Roboto-Regular",
-  },
-  buttonText: {
-    fontSize: 12,
-    color: " rgba(67, 67, 67, 0.8)",
-    textTransform: "uppercase",
   },
   viewGroupButton: {
     gap: 15
