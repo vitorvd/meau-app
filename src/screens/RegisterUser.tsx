@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Upload from "../components/Upload";
+import { EventBus, EventTypes } from "../core/EventBus";
 
 type InputData = {
   name: string;
@@ -36,11 +37,13 @@ export default function RegisterUserScreen() {
     control,
     formState: { errors },
   } = useForm();
-  const onSubmit: SubmitHandler<any> = (data) => console.log(data);
-
+  const onSubmit: SubmitHandler<any> = (data) => {
+    EventBus.getEventBus().emit(EventTypes.CREATED_USER, {... data})
+    navigation.navigate("Home" as never);
+  }
+  
   const sendForm = () => { 
     handleSubmit(onSubmit)();
-    navigation.navigate("Home" as never);
   }
 
   return (
