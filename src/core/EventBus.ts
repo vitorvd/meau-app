@@ -1,7 +1,8 @@
 import mitt, { Handler } from 'mitt';
 
 export enum EventTypes {
-  CREATED_USER = 'user:created'
+  CREATED_USER = 'user:created',
+  CREATED_ANIMAL = 'animal:created'
 }
 
 export class EventBus {

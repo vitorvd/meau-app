@@ -13,9 +13,11 @@ type Props = {
   control: any;
   label: string;
   options: Option[];
+  rules?: object;
+  errors?: Record<string, any>;
 };
 
-export default function RadioGroup({ name, control, label, options }: Props) {
+export default function RadioGroup({ name, control, label, options, rules, errors }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -23,6 +25,7 @@ export default function RadioGroup({ name, control, label, options }: Props) {
       <Controller
         control={control}
         name={name}
+        rules={rules}
         render={({ field: { onChange, value } }) => (
           <RadioButton.Group onValueChange={onChange} value={value}>
             <View style={styles.optionsRow}>
@@ -33,6 +36,9 @@ export default function RadioGroup({ name, control, label, options }: Props) {
                 </View>
               ))}
             </View>
+            {errors?.[name] && (
+              <Text style={styles.errorText}>{errors[name]?.message}</Text>
+            )}
           </RadioButton.Group>
         )}
       />
@@ -59,5 +65,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16,
     marginBottom: 4,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 2,
   },
 });

@@ -14,9 +14,11 @@ type Props = {
   control: any;
   label?: string;
   options: Option[];
+  rules?: object;
+  errors?: Record<string, any>;
 };
 
-export default function CheckboxGroup({ name, control, label, options }: Props) {
+export default function CheckboxGroup({ name, control, label, options, rules, errors }: Props) {
   return (
     <View style={styles.container}>
       {label && (
@@ -27,6 +29,7 @@ export default function CheckboxGroup({ name, control, label, options }: Props) 
         control={control}
         name={name}
         defaultValue={[]}
+        rules={rules}
         render={({ field: { onChange, value } }) => {
           const toggleValue = (val: string) => {
             if (value?.includes(val)) {
@@ -52,6 +55,10 @@ export default function CheckboxGroup({ name, control, label, options }: Props) 
 
                     {isChecked && opt.extraComponent && (
                       <View style={styles.extraContainer}>{opt.extraComponent}</View>
+                    )}
+
+                    {errors?.[name] && (
+                      <Text style={styles.errorText}>{errors[name]?.message}</Text>
                     )}
                   </View>
                 );
@@ -88,5 +95,10 @@ const styles = StyleSheet.create({
   extraContainer: {
     marginLeft: 32,
     marginTop: 4,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 2,
   },
 });
