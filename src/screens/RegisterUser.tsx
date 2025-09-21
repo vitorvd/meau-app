@@ -162,7 +162,7 @@ export default function RegisterUserScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // ajuste se tiver header
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
         <ScrollView
           contentContainerStyle={styles.scrollView}
