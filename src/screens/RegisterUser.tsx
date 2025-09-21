@@ -1,7 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -37,18 +45,16 @@ export default function RegisterUserScreen() {
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    handleSubmit(onSubmit)();
     EventBus.getEventBus().emit(EventTypes.CREATED_USER, { ...data });
     navigation.navigate("Home" as never);
   };
 
   const sendForm = () => {
-    onSubmit()
+    handleSubmit(onSubmit)();
   };
 
   const senha = watch("senha");
 
-  // Campos de dados pessoais
   const inputsPersonalData = [
     {
       name: "nomeCompleto",
@@ -122,7 +128,6 @@ export default function RegisterUserScreen() {
     },
   ] as const;
 
-  // Campos de perfil
   const inputsProfileData = [
     {
       name: "nomeUsuario",
@@ -154,52 +159,58 @@ export default function RegisterUserScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // ajuste se tiver header
       >
-        <View style={styles.warningContainer}>
-          <Text style={styles.warningText}>
-            As informações preenchidas serão divulgadas 
-            apenas para a pessoa com a qual você realizar
-            o processo de adoção e/ou apadrinhamento,
-            após a formalização do processo.
-          </Text>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.warningContainer}>
+            <Text style={styles.warningText}>
+              As informações preenchidas serão divulgadas 
+              apenas para a pessoa com a qual você realizar
+              o processo de adoção e/ou apadrinhamento,
+              após a formalização do processo.
+            </Text>
+          </View>
 
-        <Text style={styles.subTitle}>Informações pessoais</Text>
-        {inputsPersonalData.map((inputData) => (
-          <Input
-            key={inputData.name}
-            name={inputData.name}
-            placeholder={inputData.placeholder}
-            control={control}
-            rules={inputData.rules}
-            errors={errors}
+          <Text style={styles.subTitle}>Informações pessoais</Text>
+          {inputsPersonalData.map((inputData) => (
+            <Input
+              key={inputData.name}
+              name={inputData.name}
+              placeholder={inputData.placeholder}
+              control={control}
+              rules={inputData.rules}
+              errors={errors}
+            />
+          ))}
+
+          <Text style={styles.subTitle}>Informações de perfil</Text>
+          {inputsProfileData.map((inputData) => (
+            <Input
+              key={inputData.name}
+              name={inputData.name}
+              placeholder={inputData.placeholder}
+              control={control}
+              rules={inputData.rules}
+              errors={errors}
+            />
+          ))}
+
+          <Upload
+            label="Foto de perfil"
+            text="adicionar foto"
+            styleType="oceanBlue"
           />
-        ))}
 
-        <Text style={styles.subTitle}>Informações de perfil</Text>
-        {inputsProfileData.map((inputData) => (
-          <Input
-            key={inputData.name}
-            name={inputData.name}
-            placeholder={inputData.placeholder}
-            control={control}
-            rules={inputData.rules}
-            errors={errors}
-          />
-        ))}
-
-        <Upload
-          label="Foto de perfil"
-          text="adicionar foto"
-          styleType="oceanBlue"
-        />
-
-        <Button text="Fazer Cadastro" type="oceanBlue" onPress={sendForm} />
-      </ScrollView>
+          <Button text="Fazer Cadastro" type="oceanBlue" onPress={sendForm} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -211,6 +222,7 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
+    flexGrow: 1, // importante para empurrar conteúdo quando teclado abre
     justifyContent: "flex-start",
     alignItems: "center",
     gap: 10,
