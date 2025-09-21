@@ -14,6 +14,7 @@ import CheckboxGroup from "../components/CheckboxGroup";
 import Input from "../components/Input";
 import RadioGroup from "../components/RadioGroup";
 import Upload from "../components/Upload";
+import { EventBus, EventTypes } from "../core/EventBus";
 
 export default function RegisterAnimal() {
   const navigation = useNavigation();
@@ -23,11 +24,13 @@ export default function RegisterAnimal() {
     control,
     formState: { errors },
   } = useForm();
-  const onSubmit: SubmitHandler<any> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<any> = (data) => {
+    EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, { ...data });
+    navigation.navigate("ConfirmedRegisterAnimal" as never);
+  }
 
   const sendForm = () => { 
     handleSubmit(onSubmit)();
-    navigation.navigate("ConfirmedRegisterAnimal" as never);
   }
 
   return (
