@@ -13,27 +13,27 @@ export type User = {
   endereco: string;
   telefone: string;
   nomeUsuario: string;
-  senha: string;
-  senhaConfirmada: string;
+  senha?: string;
 };
 
 const eventBus = EventBus.getEventBus()
 
-const collectionName = "users";
+const USERS_COLLECTION_NAME = "users";
 
 eventBus.listen(EventTypes.CREATED_USER, async (payload) => {
 	const user = payload as User
 
   try {
-		const cred = await createUserWithEmailAndPassword(auth, user.email, user.senha);
+		const cred = await createUserWithEmailAndPassword(auth, user.email, user.senha!);
+    delete user.senha
+
     const uid = cred.user.uid;
-    await setDoc(doc(db, collectionName, uid), {
+    await setDoc(doc(db, USERS_COLLECTION_NAME, uid), {
       ...user,
       createdAt: new Date(),
     });
     console.log('Usuário salvo no Firestore:', user);
   } catch (error) {
-    console.error('Erro ao salvar usuário no Firestore:', error);
+    console.error('Erro ao salvar usuário no Firestore:', {user, error});
   }
-  console.log('Created user listener', user)
 })
