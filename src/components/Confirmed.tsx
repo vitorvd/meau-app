@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StatusBar, StyleSheet, Text, TextStyle, View } from "react-native";
 import Button from "./Button";
@@ -11,8 +10,6 @@ type Prop = {
 }
 
 export default function Confirmed({title, text, buttonText, styleType}: Prop) {
-  const navigation = useNavigation();
-  
   const titleStyle: TextStyle = styleType === "yellow" ? styles.yellowTitle : styles.oceanBlueTitle
 
   return (
