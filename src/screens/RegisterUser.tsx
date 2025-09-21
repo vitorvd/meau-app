@@ -1,32 +1,38 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Upload from "../components/Upload";
+import { EventBus, EventTypes } from "../core/EventBus";
 
-type InputData = {
-  name: string;
-  placeholder: string;
-}
+type FormValues = {
+  nomeCompleto: string;
+  idade: string;
+  email: string;
+  estado: string;
+  cidade: string;
+  endereco: string;
+  telefone: string;
+  nomeUsuario: string;
+  senha: string;
+  senhaConfirmada: string;
+};
 
-const inputsPersonalData = [
-  {name: "nomeCompleto", placeholder: "Nome completo"},
-  {name: "idade", placeholder: "Idade"},
-  {name: "email", placeholder: "E-mail"},
-  {name: "estado", placeholder: "Estado"},
-  {name: "cidade", placeholder: "Cidade"},
-  {name: "endereco", placeholder: "Endereço"},
-  {name: "telefone", placeholder: "Telefone"},
-]
-
-const inputsProfileData = [
-  {name: "nomeUsuario", placeholder: "Nome de usuário"},
-  {name: "senha", placeholder: "Senha"},
-  {name: "senhaConfirmada", placeholder: "Confirmação de senha"},
-]
+const estadosBrasil = [
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA",
+  "PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
+];
 
 export default function RegisterUserScreen() {
   const navigation = useNavigation();
@@ -34,58 +40,177 @@ export default function RegisterUserScreen() {
   const {
     handleSubmit,
     control,
-    formState: { errors },
-  } = useForm();
-  const onSubmit: SubmitHandler<any> = (data) => console.log(data);
+    watch,
+    formState: { errors }
+  } = useForm<FormValues>();
 
-  const sendForm = () => { 
-    handleSubmit(onSubmit)();
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    EventBus.getEventBus().emit(EventTypes.CREATED_USER, { ...data });
     navigation.navigate("Home" as never);
-  }
+  };
+
+  const sendForm = () => {
+    handleSubmit(onSubmit)();
+  };
+
+  const senha = watch("senha");
+
+  const inputsPersonalData = [
+    {
+      name: "nomeCompleto",
+      placeholder: "Nome completo",
+      rules: {
+        required: "Nome é obrigatório",
+        minLength: { value: 1, message: "Digite ao menos 1 caractere" },
+        pattern: {
+          value: /^[A-Za-zÀ-ú\s]+$/,
+          message: "Apenas letras são permitidas",
+        },
+      },
+    },
+    {
+      name: "idade",
+      placeholder: "Idade",
+      rules: {
+        required: "Idade é obrigatória",
+        min: { value: 18, message: "Idade mínima é 18" },
+        max: { value: 120, message: "Idade máxima é 120" },
+        pattern: { value: /^[0-9]+$/, message: "Digite apenas números" },
+      },
+    },
+    {
+      name: "email",
+      placeholder: "E-mail",
+      rules: {
+        required: "E-mail é obrigatório",
+        pattern: {
+          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          message: "Formato de e-mail inválido",
+        },
+      },
+    },
+    {
+      name: "estado",
+      placeholder: "Estado",
+      rules: {
+        required: "Estado é obrigatório",
+        validate: (value: string) =>
+          estadosBrasil.includes(value.toUpperCase()) ||
+          "Digite a sigla de um estado válido",
+      },
+    },
+    {
+      name: "cidade",
+      placeholder: "Cidade",
+      rules: {
+        required: "Cidade é obrigatória",
+        minLength: { value: 1, message: "Digite ao menos 1 caractere" },
+      },
+    },
+    {
+      name: "endereco",
+      placeholder: "Endereço",
+      rules: {
+        required: "Endereço é obrigatório",
+        minLength: { value: 1, message: "Digite ao menos 1 caractere" },
+      },
+    },
+    {
+      name: "telefone",
+      placeholder: "Telefone",
+      rules: {
+        required: "Telefone é obrigatório",
+        pattern: {
+          value: /^[1-9]{2}[0-9]{8,9}$/,
+          message: "Digite um telefone válido (ex: 11987654321)",
+        },
+      },
+    },
+  ] as const;
+
+  const inputsProfileData = [
+    {
+      name: "nomeUsuario",
+      placeholder: "Nome de usuário",
+      rules: {
+        required: "Nome de usuário é obrigatório",
+        minLength: { value: 3, message: "Mínimo de 3 caracteres" },
+      },
+    },
+    {
+      name: "senha",
+      placeholder: "Senha",
+      secureTextEntry: true,
+      rules: {
+        required: "Senha é obrigatória",
+      },
+    },
+    {
+      name: "senhaConfirmada",
+      placeholder: "Confirmação de senha",
+      secureTextEntry: true,
+      rules: {
+        required: "Confirmação é obrigatória",
+        validate: (value: string) =>
+          value === senha || "As senhas não coincidem",
+      },
+    },
+  ] as const;
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // ajuste se tiver header
       >
-        <View style={styles.warningContainer}>
-          <Text style={styles.warningText}>
-            As informações preenchidas serão divulgadas 
-            apenas para a pessoa com a qual você realizar
-            o processo de adoção e/ou apadrinhamento,
-            após a formalização do processo.
-          </Text>
-        </View>
-        <Text style={styles.subTitle}>Informações pessoais</Text>
-        { 
-          inputsPersonalData.map((inputData: InputData) => (
-            <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}            
+        <ScrollView
+          contentContainerStyle={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.warningContainer}>
+            <Text style={styles.warningText}>
+              As informações preenchidas serão divulgadas 
+              apenas para a pessoa com a qual você realizar
+              o processo de adoção e/ou apadrinhamento,
+              após a formalização do processo.
+            </Text>
+          </View>
+
+          <Text style={styles.subTitle}>Informações pessoais</Text>
+          {inputsPersonalData.map((inputData) => (
+            <Input
+              key={inputData.name}
+              name={inputData.name}
+              placeholder={inputData.placeholder}
+              control={control}
+              rules={inputData.rules}
+              errors={errors}
             />
-          ))
-        }
+          ))}
 
-        <Text style={styles.subTitle}>Informações de perfil</Text>
-        { 
-          inputsProfileData.map((inputData: InputData) => (
-            <Input name={inputData.name} key={inputData.name} placeholder={inputData.placeholder} control={control}            
+          <Text style={styles.subTitle}>Informações de perfil</Text>
+          {inputsProfileData.map((inputData) => (
+            <Input
+              key={inputData.name}
+              name={inputData.name}
+              placeholder={inputData.placeholder}
+              control={control}
+              rules={inputData.rules}
+              errors={errors}
             />
-          ))
-        }
+          ))}
 
-        <Upload
-          label="Foto de perfil"
-          text="adicionar foto"
-          styleType="oceanBlue"
-        />
+          <Upload
+            label="Foto de perfil"
+            text="adicionar foto"
+            styleType="oceanBlue"
+          />
 
-        <Button
-          text="Fazer Cadastro"
-          type="oceanBlue"
-          onPress={sendForm}
-        />
-      </ScrollView>
+          <Button text="Fazer Cadastro" type="oceanBlue" onPress={sendForm} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -97,11 +222,12 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
+    flexGrow: 1, // importante para empurrar conteúdo quando teclado abre
     justifyContent: "flex-start",
     alignItems: "center",
     gap: 10,
     paddingHorizontal: 20,
-    paddingVertical: 16
+    paddingVertical: 16,
   },
   subTitle: {
     paddingTop: 28,
@@ -114,12 +240,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#cfe9e5",
     width: "100%",
     paddingVertical: 10,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   warningText: {
     fontFamily: "Roboto-Regular",
     fontSize: 14,
     color: "#434343",
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

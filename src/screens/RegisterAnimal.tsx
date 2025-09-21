@@ -193,31 +193,6 @@ function AdocaoSection({control}: any) {
   </>
 }
 
-function AjudaSection({control}: any) {
-  return <>
-    <CheckboxGroup
-      name="necessidadesAjudaAnimal"
-      control={control}
-      label="Necessidades do animal"
-      options={[
-        {
-          label: "Alimento",
-          value: "alimento",
-        },
-        {
-          label: "Auxílio financeiro",
-          value: "auxilioFinanceiro",
-        },
-        { 
-          label: "Medicamento",
-          value: "medicamento",
-          extraComponent: <Input name="Nome do medicamento" control={control} placeholder="Nome do medicamento" />
-        },
-      ]}
-    />
-  </>
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

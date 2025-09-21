@@ -1,5 +1,4 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, TextStyle, View } from "react-native";
 
@@ -10,8 +9,6 @@ type Prop = {
 }
 
 export default function Upload({text, label, styleType}: Prop) {
-  const navigation = useNavigation();
-  
   const textStyle: TextStyle = styleType === "yellow" ? styles.yellowText : styles.oceanBlueText
 
   return (
