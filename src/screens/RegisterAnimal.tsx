@@ -16,6 +16,7 @@ import CheckboxGroup from "../components/CheckboxGroup";
 import Input from "../components/Input";
 import RadioGroup from "../components/RadioGroup";
 import Upload from "../components/Upload";
+import { useAuth } from "../contexts/AuthContext";
 import { EventBus, EventTypes } from "../core/EventBus";
 
 type FormValues = {
@@ -34,6 +35,17 @@ type FormValues = {
 
 export default function RegisterAnimal() {
   const navigation = useNavigation();
+  const { user, loading } = useAuth(); // Obtenha user e loading
+
+  // Log inicial para depuração
+  React.useEffect(() => {
+    console.log("User  no RegisterAnimal (on mount):", user);
+    if (user) {
+      console.log("User  UID disponível:", user.uid);
+    } else {
+      console.log("User  é null/undefined - usuário não logado");
+    }
+  }, [user]);
 
   const {
     handleSubmit,
@@ -49,9 +61,37 @@ export default function RegisterAnimal() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, { ...data });
+    console.log("Dados do formulário recebidos:", data); // Log dos dados do form
+
+    if (loading) {
+      console.warn("Autenticação ainda carregando. Aguarde e tente novamente.");
+      return;
+    }
+
+    if (!user) {
+      console.error("User  é null - Usuário não logado. Redirecionando para login.");
+      navigation.navigate("Login" as never);
+      return;
+    }
+
+    if (!user.uid) {
+      console.error("User .uid é undefined/empty - Problema na autenticação. Redirecionando para login.");
+      navigation.navigate("Login" as never);
+      return;
+    }
+
+    console.log("User  UID válido antes de emitir evento:", user.uid); // Log do UID
+
+    const payload = {
+      ...data,
+      ownerId: user.uid, // Adiciona ownerId explicitamente
+    };
+
+    console.log("Payload completo a ser emitido:", payload); // Log do payload final
+
+    EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, payload);
     navigation.navigate("ConfirmedRegisterAnimal" as never);
-  }
+  };
 
   const sendForm = () => handleSubmit(onSubmit)();
 
@@ -228,7 +268,7 @@ function AdocaoSection({ control, errors }: any) {
                 { label: "3 meses", value: "3meses" },
                 { label: "6 meses", value: "6meses" },
               ]}
-              error={errors.acompanhamentoPosAdocaoCheckBoxChildren?.message}
+              errors={errors.acompanhamentoPosAdocaoCheckBoxChildren?.message}
             />
           ),
         },
