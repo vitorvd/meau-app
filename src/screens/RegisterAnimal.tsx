@@ -16,6 +16,7 @@ import CheckboxGroup from "../components/CheckboxGroup";
 import Input from "../components/Input";
 import RadioGroup from "../components/RadioGroup";
 import Upload from "../components/Upload";
+import { useAuth } from "../contexts/AuthContext";
 import { EventBus, EventTypes } from "../core/EventBus";
 
 type FormValues = {
@@ -30,10 +31,12 @@ type FormValues = {
   sobreAnimal: string;
   exigenciaAdocao?: string[];
   acompanhamentoPosAdocaoCheckBoxChildren?: string[];
+  userId: string;
 };
 
 export default function RegisterAnimal() {
   const navigation = useNavigation();
+  const { user } = useAuth();
 
   const {
     handleSubmit,
@@ -49,6 +52,8 @@ export default function RegisterAnimal() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
+    data.userId = user!.uid;
+
     EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, { ...data });
     navigation.navigate("ConfirmedRegisterAnimal" as never);
   }

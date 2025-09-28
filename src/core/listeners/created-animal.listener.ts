@@ -20,6 +20,8 @@ export type Animal = {
 
   // Outros campos
   sobreAnimal?: string;
+
+  userId: string
 };
 
 const eventBus = EventBus.getEventBus()
@@ -34,6 +36,10 @@ eventBus.listen(EventTypes.CREATED_ANIMAL, async (payload) => {
   );
 
   try {
+    if(!animal.userId || animal.userId.trim() === '') {
+      throw new Error('Nenhum userId definido para o registrar o Animal');
+    }
+
     await setDoc(doc(db, ANIMALS_COLLECTION_NAME, uuid.v4()), {
       ... cleanedAnimal,
       createdAt: new Date(),
