@@ -1,9 +1,36 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useEffect, useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AnimalRepository } from '../core/repositories/aninal.repository';
+
+interface Animal {
+  id: string;
+  createdAt: Date;
+  exigenciaAdocao: string[];
+  faixaEtaria: string;
+  nome: string;
+  porte: string;
+  saude: string[];
+  sexo: string;
+  sobreAnimal: string;
+  temperamento: string[];
+}
 
 export default function ListAdoption() {
+  const [animals, setAnimals] = useState<Animal[]>([]);
+
+  useEffect(() => {
+    const fetchAnimals = async () => {
+      const animalsResponse = await AnimalRepository.findAll();
+      setAnimals(animalsResponse as Animal[]);
+    };
+
+    fetchAnimals();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
       <ScrollView
@@ -11,30 +38,39 @@ export default function ListAdoption() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <AnimalCard />
-        <AnimalCard />
+        {animals.map((animal, index) => (
+          <AnimalCard key={index} animal={animal} />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function AnimalCard() {
-  const navigation = useNavigation();
+interface AnimalCardProps {
+  animal: Animal;
+}
+
+function AnimalCard({ animal }: AnimalCardProps) {
+  type RootStackParamList = {
+    ConfirmAdoption: { animal: Animal };
+  };
+  
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
-    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("ConfirmAdoption" as never)}>
+    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("ConfirmAdoption", { animal })}>
       <View style={animalStyle.header}>
-        <Text style={animalStyle.headerText}>Brisa</Text>
+        <Text style={animalStyle.headerText}>{animal.nome}</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />
       </View>
       <Image source={require('../../assets/images/brisa.jpeg')} style={animalStyle.image} />
       <View style={{ paddingVertical: 20, justifyContent: "center", gap: 3, height: "20%" }}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingBottom: 3 }}>
-          <Text style={animalStyle.footerText}>Fêmea</Text>
-          <Text style={animalStyle.footerText}>Adulta</Text>
-          <Text style={animalStyle.footerText}>Médio</Text>
+          <Text style={animalStyle.footerText}>{animal.sexo}</Text>
+          <Text style={animalStyle.footerText}>{animal.faixaEtaria}</Text>
+          <Text style={animalStyle.footerText}>{animal.porte}</Text>
         </View>
-        <Text style={animalStyle.footerText}>Guará II</Text>
+        <Text style={animalStyle.footerText}>Itália</Text>
       </View>
     </TouchableOpacity>
   );
