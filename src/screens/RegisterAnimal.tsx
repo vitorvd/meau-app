@@ -1,5 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -10,12 +12,14 @@ import {
   Text,
   View
 } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import CheckboxGroup from "../components/CheckboxGroup";
 import Input from "../components/Input";
 import RadioGroup from "../components/RadioGroup";
 import Upload from "../components/Upload";
+import { storage } from "../config/firebaseConfig";
 import { useAuth } from "../contexts/AuthContext";
 import { EventBus, EventTypes } from "../core/EventBus";
 
@@ -32,11 +36,15 @@ type FormValues = {
   exigenciaAdocao?: string[];
   acompanhamentoPosAdocaoCheckBoxChildren?: string[];
   userId: string;
+  photoURL?: string;
 };
 
 export default function RegisterAnimal() {
   const navigation = useNavigation();
   const { user } = useAuth();
+
+  const [ImageUri, setImageUri] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     handleSubmit,
@@ -50,13 +58,64 @@ export default function RegisterAnimal() {
       acompanhamentoPosAdocaoCheckBoxChildren: [],
     },
   });
+  
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted == false) {
+      alert("Você precisa permitir o acesso à galeria para escolher uma foto!");
+      return;
+    }
+    
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+    });
+    
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+  
+  const uploadImageAsync = async (uri: string): Promise<string> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    
+    const fileName = `animals/${user!.uid}/${Date.now()}`;
+    const storageRef = ref(storage, fileName);
+    
+    await uploadBytes(storageRef, blob);
+    return await getDownloadURL(storageRef);
+  };
+  
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    data.userId = user!.uid;
+    if (!ImageUri) {
+      alert("Selecione uma foto para o animal.");
+      return;
+    }
 
-    EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, { ...data });
-    navigation.navigate("ConfirmedRegisterAnimal" as never);
-  }
+    setIsSubmitting(true);
+
+    try {
+
+      const downloadURL = await uploadImageAsync(ImageUri);
+
+      data.userId = user!.uid;
+      data.photoURL = downloadURL;
+  
+      EventBus.getEventBus().emit(EventTypes.CREATED_ANIMAL, { ...data });
+      navigation.navigate("ConfirmedRegisterAnimal" as never);
+
+    } catch (error) {
+      console.error("Erro ao cadastrar animal:", error);
+      alert("Erro ao cadastrar animal!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const sendForm = () => handleSubmit(onSubmit)();
 
@@ -73,7 +132,7 @@ export default function RegisterAnimal() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={formStyles.container}>
-            <BaseForm control={control} errors={errors} />
+            <BaseForm control={control} errors={errors} imageUri={ImageUri} onPickImage={pickImage}/>
             <AdocaoSection control={control} errors={errors} />
 
             <Input
@@ -94,6 +153,7 @@ export default function RegisterAnimal() {
               buttonStyle={{ width: 232 }}
               onPress={sendForm}
             />
+            {isSubmitting && <ActivityIndicator size="large" color="#f7a800" style={{ marginTop: 10 }} />}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -101,7 +161,7 @@ export default function RegisterAnimal() {
   );
 }
 
-function BaseForm({ control, errors }: any) {
+function BaseForm({ control, errors, imageUri, onPickImage }: any) {
   return (
     <>
       <Text style={formStyles.title}>Dados do animal</Text>
@@ -120,8 +180,10 @@ function BaseForm({ control, errors }: any) {
 
       <Upload
         label="Fotos do animal"
-        text="adicionar foto"
+        text={imageUri ? "trocar foto" : "adicionar foto"}
         styleType="yellow"
+        onPress={onPickImage}
+        imageUri={imageUri}
       />
 
       <RadioGroup
@@ -233,7 +295,7 @@ function AdocaoSection({ control, errors }: any) {
                 { label: "3 meses", value: "3meses" },
                 { label: "6 meses", value: "6meses" },
               ]}
-              error={errors.acompanhamentoPosAdocaoCheckBoxChildren?.message}
+              errors={errors.acompanhamentoPosAdocaoCheckBoxChildren?.message}
             />
           ),
         },
