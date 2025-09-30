@@ -4,6 +4,8 @@ import { db } from '../../config/firebaseConfig';
 import { EventBus, EventTypes } from "../EventBus";
 
 export type Animal = {
+  id?: string;
+  createdAt?: Date;
   nome: string;
   fotos?: string[];
   especie: "cachorro" | "gato";
@@ -14,7 +16,7 @@ export type Animal = {
   saude: Array<"vacinado" | "vermifugado" | "castrado" | "doente">;
   doencas?: string;
 
-  // AdocaoSection
+  // AdocaoSection  
   exigenciaAdocao?: Array<"termoAdocao" | "fotosCasa" | "visitaPrvia" | "acompanhamentoPosAdocao">;
   acompanhamentoPosAdocaoCheckBoxChildren?: Array<"1mes" | "3meses" | "6meses">;
 

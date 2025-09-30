@@ -11,6 +11,7 @@ import LoginOrRegisterScreen from '.././screens/LoginOrRegister';
 import RegisterAnimal from '.././screens/RegisterAnimal';
 import RegisterUserScreen from '.././screens/RegisterUser';
 import { useAuth } from '../contexts/AuthContext';
+import AnimalDetail from '../screens/AnimalDetail';
 
 type ScreenType = {
   name: string;
@@ -36,6 +37,7 @@ const hiddenScreens: ScreenType[] = [
   { name: "ConfirmAdoption", component: ConfirmAdoptionScreen, headerTitle: "Adoção Confirmada", style: "lightGreen", back: true, visible: false },
   { name: "ConfirmedRegisterAnimal", component: ConfirmedRegisterAnimalScreen, headerTitle: "", style: "yellow", back: true, visible: false },
   { name: "NotAuthorizared", component: LoginOrRegisterScreen, headerTitle: "Acesso negado", style: "blueOcean", back: true, visible: false },
+  { name: "AnimalDetail", component: AnimalDetail, headerTitle: "Detalhes do Animal", style: "yellow", back: true, visible: false },
 ];
 
 const authorizatedScreens = visibleScreens.concat(hiddenScreens);

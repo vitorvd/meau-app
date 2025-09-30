@@ -4,20 +4,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animal } from '../core/listeners/created-animal.listener';
 import { AnimalRepository } from '../core/repositories/aninal.repository';
-
-interface Animal {
-  id: string;
-  createdAt: Date;
-  exigenciaAdocao: string[];
-  faixaEtaria: string;
-  nome: string;
-  porte: string;
-  saude: string[];
-  sexo: string;
-  sobreAnimal: string;
-  temperamento: string[];
-}
 
 export default function ListAdoption() {
   const [animals, setAnimals] = useState<Animal[]>([]);
@@ -52,13 +40,13 @@ interface AnimalCardProps {
 
 function AnimalCard({ animal }: AnimalCardProps) {
   type RootStackParamList = {
-    ConfirmAdoption: { animal: Animal };
+    AnimalDetail: { animal: Animal };
   };
   
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
-    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("ConfirmAdoption", { animal })}>
+    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("AnimalDetail", { animal })}>
       <View style={animalStyle.header}>
         <Text style={animalStyle.headerText}>{animal.nome}</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />
