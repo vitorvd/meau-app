@@ -1,25 +1,26 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
-import { StyleSheet, Text, TextStyle, View } from "react-native";
+import { Image, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
 
 type Prop = {
   text: string,
   label: string,
   styleType: "yellow" | "oceanBlue";
+  onPress: () => void;
+  imageUri?: string | null;
 }
 
-export default function Upload({text, label, styleType}: Prop) {
+export default function Upload({text, label, styleType, onPress, imageUri}: Prop) {
   const textStyle: TextStyle = styleType === "yellow" ? styles.yellowText : styles.oceanBlueText
 
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
         <Text style={textStyle}>{label}</Text>
+        {imageUri && <Image source={{ uri: imageUri }} /> }
       </View>
-      <View style={styles.uploadContainer}>
-        <MaterialIcons name="add-circle" size={14} color="#434343" />
-        <Text style={styles.text}>{text}</Text>
-      </View>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.buttonText}>{text}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -70,5 +71,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 22,
     letterSpacing: 0.5
+  },
+  preview: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  button: {
+    backgroundColor: '#f7a800', // Cor de exemplo
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
