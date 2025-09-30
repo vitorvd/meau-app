@@ -45,13 +45,15 @@ function AnimalCard({ animal }: AnimalCardProps) {
   
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+  const image = animal.photoURL ? { uri: animal.photoURL } : require('../../assets/images/brisa.jpeg');
+
   return (
     <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("AnimalDetail", { animal })}>
       <View style={animalStyle.header}>
         <Text style={animalStyle.headerText}>{animal.nome}</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />
       </View>
-      <Image source={require('../../assets/images/brisa.jpeg')} style={animalStyle.image} />
+      <Image source={image} style={animalStyle.image} />
       <View style={{ paddingVertical: 20, justifyContent: "center", gap: 3, height: "20%" }}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingBottom: 3 }}>
           <Text style={animalStyle.footerText}>{animal.sexo}</Text>

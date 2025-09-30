@@ -7,7 +7,7 @@ export type Animal = {
   id?: string;
   createdAt?: Date;
   nome: string;
-  fotos?: string[];
+  photoURL?: string;
   especie: "cachorro" | "gato";
   sexo: "macho" | "femea";
   porte: "pequeno" | "medio" | "grande";

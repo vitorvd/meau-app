@@ -15,6 +15,8 @@ export default function AnimalDetail({ route }: any) {
 		navigation.navigate("ConfirmAdoption" as never);
 	}
 
+	const image = animal.photoURL ? { uri: animal.photoURL } : require('../../assets/images/brisa.jpeg');
+
 	return (	
 		<SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
 			<ScrollView
@@ -22,7 +24,7 @@ export default function AnimalDetail({ route }: any) {
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 			>
-				<Image source={require('../../assets/images/brisa.jpeg')} style={styles.image} />
+				<Image source={image} style={styles.image} />
 				<Text style={styles.title}>{animal.nome}</Text>
 				<View style={styles.bodyContainer}>
 					<View style={[{flexDirection: "row", justifyContent: "space-between", width: "100%"}]}>
