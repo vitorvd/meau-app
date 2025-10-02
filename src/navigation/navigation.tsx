@@ -12,6 +12,7 @@ import RegisterAnimal from '.././screens/RegisterAnimal';
 import RegisterUserScreen from '.././screens/RegisterUser';
 import { useAuth } from '../contexts/AuthContext';
 import AnimalDetail from '../screens/AnimalDetail';
+import MyPetsList from '../screens/MyPetsList';
 
 type ScreenType = {
   name: string;
@@ -31,6 +32,7 @@ const visibleScreens: ScreenType[] = [
   { name: "Home", component: Home, label: "Início", headerTitle: "", style: "white" },
   { name: "AdoptionList", component: AdoptionScreen, label: "Lista de adoção", headerTitle: "Adotar", style: "yellow" },
   { name: "RegisterAnimal", component: RegisterAnimal, label: "Cadastrar Animal", headerTitle: "Cadastrar Animal", style: "yellow", back: true },
+  { name: "MyPetsList", component: MyPetsList, label: "Meus Pets", headerTitle: "Meus Pets", style: "lightGreen", back: true },
 ];
 
 const hiddenScreens: ScreenType[] = [

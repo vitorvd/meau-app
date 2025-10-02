@@ -4,15 +4,17 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../contexts/AuthContext';
 import { Animal } from '../core/listeners/created-animal.listener';
 import { AnimalRepository } from '../core/repositories/aninal.repository';
 
-export default function ListAdoption() {
+export default function MyPetsList() {
+  const { user } = useAuth();
   const [animals, setAnimals] = useState<Animal[]>([]);
 
   useEffect(() => {
     const fetchAnimals = async () => {
-      const animalsResponse = await AnimalRepository.findAll();
+      const animalsResponse = await AnimalRepository.findByUserId(user!.uid);
       setAnimals(animalsResponse as Animal[]);
     };
 
