@@ -8,9 +8,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { Animal } from '../core/listeners/created-animal.listener';
 import { AnimalRepository } from '../core/repositories/aninal.repository';
 
+type RootStackParamList = {
+  AnimalDetail: { animal: Animal; fromMyPets?: boolean };
+};
+
 export default function MyPetsList() {
   const { user } = useAuth();
   const [animals, setAnimals] = useState<Animal[]>([]);
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const fetchAnimals = async () => {
@@ -28,8 +33,8 @@ export default function MyPetsList() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {animals.map((animal, index) => (
-          <AnimalCard key={index} animal={animal} />
+        {animals.map((animal) => (
+          <AnimalCard key={animal.id} animal={animal} navigation={navigation} />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -38,17 +43,12 @@ export default function MyPetsList() {
 
 interface AnimalCardProps {
   animal: Animal;
+  navigation: StackNavigationProp<RootStackParamList>;
 }
 
-function AnimalCard({ animal }: AnimalCardProps) {
-  type RootStackParamList = {
-    AnimalDetail: { animal: Animal };
-  };
-
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
+function AnimalCard({ animal, navigation }: AnimalCardProps){
   return (
-    <TouchableOpacity style={animalStyle.card} onPress={() => navigation.navigate("AnimalDetail", { animal })}>
+    <TouchableOpacity style={animalStyle.card} activeOpacity={1} onPress={() => navigation.navigate("AnimalDetail", { animal, fromMyPets: true })}>
       <View style={animalStyle.header}>
         <Text style={animalStyle.headerText}>{animal.nome}</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />

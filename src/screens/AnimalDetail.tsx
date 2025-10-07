@@ -1,19 +1,36 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
 import { Image, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import LabelWithValue from "../components/LabelWithValue";
 import { Animal } from "../core/listeners/created-animal.listener";
+import { AnimalRepository } from "../core/repositories/aninal.repository";
 
-export default function AnimalDetail({ route }: any) {
+export default function AnimalDetail() {
 	const navigation = useNavigation();
-	const animal = route.params.animal as Animal;
+	const route = useRoute();
+	const { animal, fromMyPets } =  route.params as {animal: Animal; fromMyPets?: boolean};
+
+	const [visible, setVisible] = useState(animal.visivel ?? true);
 
 	const getBooleanIfIncluded = (array: Array<string>, value: string, trueFallback: string = "Sim", falseFallback: string = "Não") => array.includes(value) ? trueFallback : falseFallback;
 
 	const handleClickAdoptionButton = () => {
 		navigation.navigate("ConfirmAdoption" as never);
 	}
+	const handleToggleVisibility = async () => {
+    if (!animal.id) return;
+
+    try {
+      await AnimalRepository.toggleVisibility(animal.id, !visible);
+      setVisible(!visible);
+      alert(`Pet ${!visible ? "tornado visível" : "ocultado"} com sucesso!`);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao alterar visibilidade do pet.");
+    }
+  };
 
 	return (	
 		<SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
@@ -73,7 +90,13 @@ export default function AnimalDetail({ route }: any) {
 						label="Mais sobre o animal"
 						value={animal.sobreAnimal || "Não informado"}
 					/>
-					
+					{fromMyPets === true && (
+						<Button
+              				text={visible ? "Ocultar da adoção" : "Tornar visível novamente"}
+              				type={visible ? "gray" : "oceanBlue"} // você pode criar cores no Button
+              				onPress={handleToggleVisibility}
+            			/>
+					)}
 					<Button text="Pretendo Adotar" type="yellow" onPress={handleClickAdoptionButton} />
 				</View>
 			</ScrollView>
