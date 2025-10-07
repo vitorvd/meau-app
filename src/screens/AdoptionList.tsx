@@ -13,6 +13,7 @@ export default function ListAdoption() {
   useEffect(() => {
     const fetchAnimals = async () => {
       const animalsResponse = await AnimalRepository.findAll();
+      const visibleAnimals = animalsResponse.filter(animal => animal.visivel !== false);
       setAnimals(animalsResponse as Animal[]);
     };
 

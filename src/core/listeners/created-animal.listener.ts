@@ -4,7 +4,7 @@ import { db } from '../../config/firebaseConfig';
 import { EventBus, EventTypes } from "../EventBus";
 
 export type Animal = {
-  id?: string;
+  id: string;
   createdAt?: Date;
   nome: string;
   photoURL?: string;
@@ -15,6 +15,7 @@ export type Animal = {
   temperamento: Array<"brincalhao" | "timido" | "calmo" | "guarda" | "amoroso" | "preguicoso">;
   saude: Array<"vacinado" | "vermifugado" | "castrado" | "doente">;
   doencas?: string;
+  visivel?: boolean;
 
   // AdocaoSection  
   exigenciaAdocao?: Array<"termoAdocao" | "fotosCasa" | "visitaPrvia" | "acompanhamentoPosAdocao">;
