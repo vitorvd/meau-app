@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Animal } from '../core/listeners/created-animal.listener';
-import { AnimalRepository } from '../core/repositories/aninal.repository';
 
 export default function ListAdoption() {
   const [animals, setAnimals] = useState<Animal[]>([]);
