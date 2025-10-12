@@ -1,8 +1,14 @@
+import { useNavigation } from "@react-navigation/native";
 import { StatusBar, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Confirmed from "../components/Confirmed";
 
 export default function ConfirmedRegisterAnimalScreen() {
+  const navigation = useNavigation();
+
+  const handleGoToMyPets = () => {
+    navigation.navigate("MyPetsList" as never);
+  };
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>
       <Confirmed
@@ -22,6 +28,7 @@ assim que alguém interessado entrar
 em contato!
             `
           }
+          onPress={handleGoToMyPets}
       />
     </SafeAreaView>
   );

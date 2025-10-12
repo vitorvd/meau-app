@@ -7,9 +7,10 @@ type Prop = {
   text: string,
   buttonText: string,
   styleType: "yellow" | "oceanBlue";
+  onPress?: () => void;
 }
 
-export default function Confirmed({title, text, buttonText, styleType}: Prop) {
+export default function Confirmed({title, text, buttonText, styleType, onPress}: Prop) {
   const titleStyle: TextStyle = styleType === "yellow" ? styles.yellowTitle : styles.oceanBlueTitle
 
   return (
@@ -21,6 +22,7 @@ export default function Confirmed({title, text, buttonText, styleType}: Prop) {
       <Button
         text={buttonText}
         type={styleType}
+        onPress={onPress}
       />
     </View>
   );
