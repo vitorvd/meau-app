@@ -4,6 +4,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -59,10 +60,27 @@ export default function RegisterAnimal() {
     },
   });
   
-  const pickImage = async () => {
+  const takePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("É necessária a permissão para acessar a câmera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3], // Proporção para fotos de animais
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const selectFromGallery = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (permissionResult.granted == false) {
+    if (permissionResult.granted === false) {
       alert("Você precisa permitir o acesso à galeria para escolher uma foto!");
       return;
     }
@@ -77,6 +95,19 @@ export default function RegisterAnimal() {
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
     }
+  };
+
+  const handleChoosePhoto = () => {
+    Alert.alert(
+      "Selecionar Foto do Animal",
+      "De onde você quer escolher a foto?",
+      [
+        { text: "Tirar Foto...", onPress: takePhoto },
+        { text: "Escolher da Galeria...", onPress: selectFromGallery },
+        { text: "Cancelar", style: "cancel" },
+      ],
+      { cancelable: true }
+    );
   };
   
   const uploadImageAsync = async (uri: string): Promise<string> => {
@@ -132,7 +163,7 @@ export default function RegisterAnimal() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={formStyles.container}>
-            <BaseForm control={control} errors={errors} imageUri={ImageUri} onPickImage={pickImage}/>
+            <BaseForm control={control} errors={errors} imageUri={ImageUri} onPickImage={handleChoosePhoto}/>
             <AdocaoSection control={control} errors={errors} />
 
             <Input

@@ -1,7 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Animal } from '../core/listeners/created-animal.listener';
@@ -10,15 +10,17 @@ import { AnimalRepository } from '../core/repositories/aninal.repository';
 export default function ListAdoption() {
   const [animals, setAnimals] = useState<Animal[]>([]);
 
-  useEffect(() => {
-    const fetchAnimals = async () => {
-      const animalsResponse = await AnimalRepository.findAll();
-      const visibleAnimals = animalsResponse.filter(animal => animal.visivel !== false);
-      setAnimals(animalsResponse as Animal[]);
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAnimals = async () => {
+        const animalsResponse = await AnimalRepository.findAll();
+        const visibleAnimals = animalsResponse.filter(animal => animal.visivel !== false);
+        setAnimals(visibleAnimals);
+      };
 
-    fetchAnimals();
-  }, []);
+      fetchAnimals();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>

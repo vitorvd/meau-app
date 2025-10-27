@@ -1,7 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,14 +17,21 @@ export default function MyPetsList() {
   const [animals, setAnimals] = useState<Animal[]>([]);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  useEffect(() => {
+  useFocusEffect(() => {
+    let isActive = true;
     const fetchAnimals = async () => {
       const animalsResponse = await AnimalRepository.findByUserId(user!.uid);
-      setAnimals(animalsResponse as Animal[]);
+      if (isActive) {
+        setAnimals(animalsResponse);
+      }
     };
 
-    fetchAnimals();
-  }, []);
+  fetchAnimals();
+
+  return () => {
+    isActive = false;
+  };
+});
 
   return (
     <SafeAreaView style={styles.container} edges={["right", "left", "bottom"]}>

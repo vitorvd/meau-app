@@ -10,15 +10,22 @@ type Prop = {
 }
 
 export default function Upload({text, label, styleType, onPress, imageUri}: Prop) {
-  const textStyle: TextStyle = styleType === "yellow" ? styles.yellowText : styles.oceanBlueText
+
+  const textStyle: TextStyle = styleType === "yellow" ? styles.yellowText : styles.oceanBlueText;
+
+  const buttonStyle = styleType === "yellow" ? styles.yellowButton : styles.oceanBlueButton;
 
   return (
     <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={textStyle}>{label}</Text>
-        {imageUri && <Image source={{ uri: imageUri }} /> }
+      <Text style={[styles.label, textStyle]}>{label}</Text>
+      <View style={styles.previewContainer}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.previewImage} />
+        ) : (
+          <Text style={styles.placeholderText}>A foto aparecerá aqui</Text>
+        )}
       </View>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <TouchableOpacity style={[styles.button, buttonStyle]} onPress={onPress}>
         <Text style={styles.buttonText}>{text}</Text>
       </TouchableOpacity>
     </View>
@@ -27,66 +34,57 @@ export default function Upload({text, label, styleType, onPress, imageUri}: Prop
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
     alignItems: "center", 
-    justifyContent: "center",
+    marginVertical: 15,
+  },
+  label: {
     width: "100%",
-  },
-  labelContainer: {
-    alignItems: "flex-start", 
-    justifyContent: "flex-start",
-    width: "100%",
-  },
-  uploadContainer: {
-    width: 128,
-    height: 128,
-    borderWidth: 2,
-    borderRadius: 3,
-    borderColor: "#e6e7e7",
-    backgroundColor: "#e6e7e7",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
-    marginVertical: 32,
-  },
-  oceanBlueText: {
-    fontFamily: "Roboto-Regular",
-    paddingTop: 28,
-    color: "#88c9bf",
     fontSize: 14,
+    fontFamily: "Roboto-Regular",
+    marginBottom: 8,
+  },
+  
+  oceanBlueText: {
+    color: "#88c9bf",
   },
   yellowText: {
-    fontFamily: "Roboto-Regular",
-    paddingTop: 28,
     color: "#ffd358",
-    fontSize: 14,
   },
-  text: {
+  previewContainer: {
+    width: "100%",
+    height: 200,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  previewImage: {
+    width: "100%",
+    height: "100%",
+  },
+  placeholderText: {
     fontSize: 14,
     fontFamily: "Roboto-Regular",
     color: "#757575",
-    textAlign: "center",
-    lineHeight: 22,
-    letterSpacing: 0.5
-  },
-  preview: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignSelf: 'center',
   },
   button: {
-    backgroundColor: '#f7a800', // Cor de exemplo
-    padding: 12,
+    width: '100%',
+    padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  yellowButton: {
+    backgroundColor: '#f7a800',
+  },
+  oceanBlueButton: {
+    backgroundColor: '#88c9bf',
   },
 });
