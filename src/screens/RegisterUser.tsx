@@ -1,19 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Upload from "../components/Upload";
+import { storage } from "../config/firebaseConfig";
 import { EventBus, EventTypes } from "../core/EventBus";
 
 type FormValues = {
@@ -27,6 +31,7 @@ type FormValues = {
   nomeUsuario: string;
   senha: string;
   senhaConfirmada: string;
+  photoURL?: string;
 };
 
 const estadosBrasil = [
@@ -37,6 +42,9 @@ const estadosBrasil = [
 export default function RegisterUserScreen() {
   const navigation = useNavigation();
 
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     handleSubmit,
     control,
@@ -44,9 +52,97 @@ export default function RegisterUserScreen() {
     formState: { errors }
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    EventBus.getEventBus().emit(EventTypes.CREATED_USER, { ...data });
-    navigation.navigate("Home" as never);
+  const takePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("É necessária a permissão para acessar a câmera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const selectFromGallery = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("É necessária a permissão para acessar suas fotos!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const handleChoosePhoto = () => {
+    Alert.alert(
+      "Selecionar Foto de Perfil",
+      "Escolha uma opção",
+      [
+        {
+          text: "Tirar Foto...",
+          onPress: takePhoto,
+        },
+        {
+          text: "Escolher da Galeria...",
+          onPress: selectFromGallery,
+        },
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true } // Permite fechar o alerta tocando fora
+    );
+  };
+
+  const uploadImageAsync = async (uri: string): Promise<string> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    
+    const fileName = `users/${Date.now()}/profile.jpg`;
+    const storageRef = ref(storage, fileName);
+
+    await uploadBytes(storageRef, blob);
+    return await getDownloadURL(storageRef);
+  };
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!imageUri) {
+      alert("Por favor, selecione uma foto de perfil.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const downloadURL = await uploadImageAsync(imageUri);
+      
+      data.photoURL = downloadURL;
+
+      EventBus.getEventBus().emit(EventTypes.CREATED_USER, { ...data });
+      navigation.navigate("Home" as never);
+
+    } catch (error) {
+      console.error("Erro no cadastro de usuário:", error);
+      alert("Ocorreu um erro ao criar seu cadastro. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const sendForm = () => {
@@ -204,8 +300,10 @@ export default function RegisterUserScreen() {
 
           <Upload
             label="Foto de perfil"
-            text="adicionar foto"
+            text={imageUri ? "Trocar foto" : "Adicionar foto"}
             styleType="oceanBlue"
+            onPress={handleChoosePhoto}
+            imageUri={imageUri}
           />
 
           <Button text="Fazer Cadastro" type="oceanBlue" onPress={sendForm} />
@@ -222,7 +320,7 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
-    flexGrow: 1, // importante para empurrar conteúdo quando teclado abre
+    flexGrow: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     gap: 10,
