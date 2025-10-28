@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth, db } from "../config/firebaseConfig";
+import { ChatService } from "../core/services/chat.service";
 
 type Message = {
   id: string;
@@ -14,22 +15,39 @@ type Message = {
 type ChatScreenProps = {
   route: {
     params: {
-      otherUserId: string;
+      animalOwnerId: string;
+      initiatorId: string;
+      animalId: string;
       otherUserName: string;
+      animalName?: string;
     };
   };
 };
 
 export default function ChatScreen({ route }: ChatScreenProps) {
-  const { otherUserId, otherUserName } = route.params;
+  const { animalOwnerId, initiatorId, animalId, otherUserName, animalName } = route.params;
   const currentUserId = auth.currentUser?.uid!;
-  const chatId = [currentUserId, otherUserId].sort().join("_");
-
+  const [chatId, setChatId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
 
   useEffect(() => {
-    const messagesRef = collection(db, "chats", chatId, "messages");
+    const initializeChat = async () => {
+      try {
+        const id = await ChatService.getOrCreateChat(animalOwnerId, initiatorId, animalId, animalName);
+        setChatId(id);
+      } catch (error) {
+        console.error("Erro ao inicializar chat:", error);
+      }
+    };
+
+    initializeChat();
+  }, [animalOwnerId, initiatorId, animalId, animalName]);
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    const messagesRef = collection(db, "conversations", chatId, "messages");
     const q = query(messagesRef, orderBy("createdAt", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const msgs: Message[] = snapshot.docs.map((doc) => ({
@@ -45,16 +63,29 @@ export default function ChatScreen({ route }: ChatScreenProps) {
   }, [chatId]);
 
   const sendMessage = async () => {
-    if (inputText.trim() === "") return;
+    if (inputText.trim() === "" || !chatId) return;
 
-    const messagesRef = collection(db, "chats", chatId, "messages");
-    await addDoc(messagesRef, {
-      text: inputText,
-      senderId: currentUserId,
-      createdAt: serverTimestamp(),
+    try {
+      const messagesRef = collection(db, "conversations", chatId, "messages");
+      await addDoc(messagesRef, {
+        text: inputText,
+        senderId: currentUserId,
+        createdAt: serverTimestamp(),
+      });
+
+      setInputText("");
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+    }
+  };
+
+  const formatMessageTime = (timestamp: any) => {
+    if (!timestamp) return "";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleTimeString("pt-BR", { 
+      hour: "2-digit", 
+      minute: "2-digit" 
     });
-
-    setInputText("");
   };
 
   const renderItem = ({ item }: { item: Message }) => {
@@ -62,6 +93,9 @@ export default function ChatScreen({ route }: ChatScreenProps) {
     return (
       <View style={[styles.messageContainer, isMe ? styles.myMessage : styles.theirMessage]}>
         <Text style={styles.messageText}>{item.text}</Text>
+        <Text style={[styles.messageTime, isMe ? styles.myMessageTime : styles.theirMessageTime]}>
+          {formatMessageTime(item.createdAt)}
+        </Text>
       </View>
     );
   };
@@ -73,24 +107,32 @@ export default function ChatScreen({ route }: ChatScreenProps) {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={90}
       >
-        <FlatList
-          data={messages}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 10 }}
-        />
+        {!chatId ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Inicializando chat...</Text>
+          </View>
+        ) : (
+          <>
+            <FlatList
+              data={messages}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ padding: 10 }}
+            />
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder={`Mensagem para ${otherUserName}`}
-            value={inputText}
-            onChangeText={setInputText}
-          />
-          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-            <Text style={{ color: "#fff" }}>Enviar</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder={`Mensagem para ${otherUserName}${animalName ? ` sobre ${animalName}` : ""}`}
+                value={inputText}
+                onChangeText={setInputText}
+              />
+              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+                <Text style={{ color: "#fff" }}>Enviar</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -113,6 +155,19 @@ const styles = StyleSheet.create({
   },
   messageText: {
     color: "#000",
+    marginBottom: 2,
+  },
+  messageTime: {
+    fontSize: 10,
+    fontStyle: "italic",
+  },
+  myMessageTime: {
+    color: "rgba(255, 255, 255, 0.7)",
+    textAlign: "right",
+  },
+  theirMessageTime: {
+    color: "rgba(0, 0, 0, 0.5)",
+    textAlign: "left",
   },
   inputContainer: {
     flexDirection: "row",
@@ -133,5 +188,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#757575",
+    fontFamily: "Roboto-Regular",
   },
 });
