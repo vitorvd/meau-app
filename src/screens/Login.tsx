@@ -8,6 +8,8 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { auth } from "../config/firebaseConfig";
 
+
+
 type FormValues = {
   email: string;
   senha: string;
@@ -45,7 +47,9 @@ export default function LoginScreen() {
   } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.senha);
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.senha);
+      const user = userCredential.user;
+      //await registerForPushNotificationsAsync(user.uid);
       navigation.navigate("Home" as never);
     } catch (error: any) {
       console.error("Falha para autenticar", error.code, error.message);
