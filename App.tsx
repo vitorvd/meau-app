@@ -6,10 +6,7 @@ import { enableScreens } from 'react-native-screens';
 import { AuthProvider } from './src/contexts/AuthContext';
 import Navigation from './src/navigation/navigation';
 
-/**
-  Registra e starta os listeners do Mitt
-  @see https://www.npmjs.com/package/mitt
-  */
+
 import './src/core/listeners';
 
 enableScreens();

@@ -12,6 +12,8 @@ import RegisterAnimal from '.././screens/RegisterAnimal';
 import RegisterUserScreen from '.././screens/RegisterUser';
 import { useAuth } from '../contexts/AuthContext';
 import AnimalDetail from '../screens/AnimalDetail';
+import ChatScreen from '../screens/ChatList';
+import ChatListScreen from '../screens/ChatListScreen';
 import MyPetsList from '../screens/MyPetsList';
 
 type ScreenType = {
@@ -33,6 +35,7 @@ const visibleScreens: ScreenType[] = [
   { name: "AdoptionList", component: AdoptionScreen, label: "Lista de adoção", headerTitle: "Adotar", style: "yellow" },
   { name: "RegisterAnimal", component: RegisterAnimal, label: "Cadastrar Animal", headerTitle: "Cadastrar Animal", style: "yellow", back: true },
   { name: "MyPetsList", component: MyPetsList, label: "Meus Pets", headerTitle: "Meus Pets", style: "lightGreen", back: true },
+  { name: "ChatList", component: ChatListScreen, label: "Mensagens", headerTitle: "Mensagens", style: "blueOcean", back: true },
 ];
 
 const hiddenScreens: ScreenType[] = [
@@ -40,6 +43,7 @@ const hiddenScreens: ScreenType[] = [
   { name: "ConfirmedRegisterAnimal", component: ConfirmedRegisterAnimalScreen, headerTitle: "", style: "yellow", back: true, visible: false },
   { name: "NotAuthorizared", component: LoginOrRegisterScreen, headerTitle: "Acesso negado", style: "blueOcean", back: true, visible: false },
   { name: "AnimalDetail", component: AnimalDetail, headerTitle: "Detalhes do Animal", style: "yellow", back: true, visible: false },
+  { name: "ChatScreen", component: ChatScreen, headerTitle: "Chat", style: "blueOcean", back: true, visible: false },
 ];
 
 const authorizatedScreens = visibleScreens.concat(hiddenScreens);
