@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth, db } from "../config/firebaseConfig";
+import { notifyReceiver } from "../core/services/chat.notifications";
 import { ChatService } from "../core/services/chat.service";
 
 type Message = {
@@ -72,6 +73,16 @@ export default function ChatScreen({ route }: ChatScreenProps) {
         senderId: currentUserId,
         createdAt: serverTimestamp(),
       });
+
+      const receiverId = currentUserId === animalOwnerId ? initiatorId : animalOwnerId;
+
+      await notifyReceiver(
+        animalOwnerId === currentUserId ? initiatorId : animalOwnerId,
+        auth.currentUser?.displayName || "Usuário",
+        inputText,
+        chatId,
+        currentUserId,
+      );
 
       setInputText("");
     } catch (error) {

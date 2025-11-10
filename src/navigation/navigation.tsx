@@ -1,5 +1,5 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { BackButton } from '.././components/ArrowBack';
 import { headerStyles } from '.././constants/global.styles';
 import AdoptionScreen from '.././screens/AdoptionList';
@@ -55,7 +55,11 @@ const unauthorizatedScreens: ScreenType[] = [
   { name: "Home", component: Home, label: "Início", headerTitle: "", style: "white", visible: false },
 ]
 
-export default function Navigation() {
+type NavigationProps = {
+  navigationRef?: React.RefObject<NavigationContainerRef<any> | null>;
+};
+
+export default function Navigation({ navigationRef }: NavigationProps) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -65,7 +69,7 @@ export default function Navigation() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Drawer.Navigator initialRouteName={user ? "Home" : "NotAuthorizared"} screenOptions={{ headerShown: true }}>
         {(user ? authorizatedScreens : unauthorizatedScreens).map(
           ({ name, component, label, headerTitle, style, back, visible }) => (
@@ -86,7 +90,6 @@ export default function Navigation() {
           )
         )}
       </Drawer.Navigator>
-
     </NavigationContainer>
   );
 }

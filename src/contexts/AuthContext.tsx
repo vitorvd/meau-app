@@ -1,6 +1,8 @@
 import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../config/firebaseConfig";
+import { auth, db } from "../config/firebaseConfig";
+import { registerForPushNotificationsAsync } from "../core/services/notifications";
 
 type AuthContextType = {
   user: User | null;
@@ -16,13 +18,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Escuta mudanças no estado de login do Firebase
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    const unsubscribeAuth = onAuthStateChanged(auth, async (userAuth: User | null) => {
+      setUser(userAuth);
       setLoading(false);
+
+      if(userAuth){
+        try{
+          const token = await registerForPushNotificationsAsync(userAuth.uid);
+          
+          if(token){
+            console.log("tokne de notificação", token);
+
+            await setDoc(
+              doc(db, "users", userAuth.uid),
+              { expoPushToken: token},
+              { merge: true }
+            );
+          }
+        } catch (error){
+          console.error("erro ao registrar notificações", error);
+        }
+      }
     });
 
-    return unsubscribe;
-  }, []);
+  return unsubscribeAuth;
+}, []);
 
   const logout = async () => {
     await auth.signOut();
