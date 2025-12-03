@@ -24,6 +24,10 @@ import { storage } from "../config/firebaseConfig";
 import { useAuth } from "../contexts/AuthContext";
 import { EventBus, EventTypes } from "../core/EventBus";
 
+// Use the exported MediaTypeOptions from expo-image-picker but keep a
+// `MediaType` alias for the codebase's existing usage.
+const MediaType = ImagePicker.MediaTypeOptions;
+
 type FormValues = {
   nome: string;
   especie: "cachorro" | "gato";
@@ -86,7 +90,7 @@ export default function RegisterAnimal() {
     }
     
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: MediaType.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
