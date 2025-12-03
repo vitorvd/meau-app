@@ -22,10 +22,7 @@ export default function ChatListScreen() {
     
     try {
       setLoading(true);
-      
-      // Debug: verificar usuários na collection
-      await ChatService.debugUsers();
-      
+            
       const userChats = await ChatService.getChatsForUser(user.uid);
       console.log("Chats carregados:", userChats);
       setChats(userChats);
