@@ -23,7 +23,15 @@ export class AnimalRepository {
   static async toggleVisibility(animalId: string, visible: boolean) {
     try {
       const animalRef = doc(db, ANIMALS_COLLECTION_NAME, animalId);
-      await updateDoc(animalRef, { visivel: visible });
+      const updateData: any = { visivel: visible };
+      
+      // Se tornar visível novamente, remover a marcação de adotado
+      // (mas manter o originalOwnerId para histórico)
+      if (visible) {
+        updateData.adopted = false;
+      }
+      
+      await updateDoc(animalRef, updateData);
       console.log(`Animal ${animalId} agora está ${visible ? "visível" : "oculto"}.`);
     } catch (error) {
       console.error("Erro ao atualizar visibilidade do animal:", error);

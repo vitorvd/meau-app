@@ -54,9 +54,23 @@ interface AnimalCardProps {
 }
 
 function AnimalCard({ animal, navigation }: AnimalCardProps){
+  // Mostrar borda verde se o animal foi adotado (adopted = true)
+  // Quando tornar visível novamente, adopted será false, então volta a borda amarela
+  const showGreenBorder = animal.adopted === true;
+  
   return (
-    <TouchableOpacity style={animalStyle.card} activeOpacity={1} onPress={() => navigation.navigate("AnimalDetail", { animal, fromMyPets: true })}>
-      <View style={animalStyle.header}>
+    <TouchableOpacity 
+      style={[
+        animalStyle.card,
+        showGreenBorder && animalStyle.cardAdopted
+      ]} 
+      activeOpacity={1} 
+      onPress={() => navigation.navigate("AnimalDetail", { animal, fromMyPets: true })}
+    >
+      <View style={[
+        animalStyle.header,
+        showGreenBorder && animalStyle.headerAdopted
+      ]}>
         <Text style={animalStyle.headerText}>{animal.nome}</Text>
         <MaterialIcons style={animalStyle.headerText} name="favorite-border" size={24} />
       </View>
@@ -84,6 +98,11 @@ const animalStyle = StyleSheet.create({
     shadowOpacity: 0.50,
     shadowRadius: 3.84, 
     elevation: 5,
+    borderWidth: 2,
+    borderColor: "#fee29b", // Borda amarela padrão
+  },
+  cardAdopted: {
+    borderColor: "#4caf50", // Borda verde para animais adotados
   },
   header: {
     flexDirection: "row",
@@ -94,6 +113,9 @@ const animalStyle = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     height: "15%",
+  },
+  headerAdopted: {
+    backgroundColor: "#c8e6c9", // Fundo verde claro para animais adotados
   },
   headerText: {
     fontSize: 16,

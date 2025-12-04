@@ -1,9 +1,12 @@
 import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../components/Button";
 import { auth, db } from "../config/firebaseConfig";
+import { AdoptionRequest, AdoptionService } from "../core/services/adoption.service";
 import { ChatService } from "../core/services/chat.service";
+import { NotificationService } from "../core/services/notification.service";
 
 type Message = {
   id: string;
@@ -30,19 +33,26 @@ export default function ChatScreen({ route }: ChatScreenProps) {
   const [chatId, setChatId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
+  const [adoptionRequest, setAdoptionRequest] = useState<AdoptionRequest | null>(null);
+  const isAnimalOwner = currentUserId === animalOwnerId;
 
   useEffect(() => {
     const initializeChat = async () => {
       try {
         const id = await ChatService.getOrCreateChat(animalOwnerId, initiatorId, animalId, animalName);
         setChatId(id);
+        
+        if (isAnimalOwner) {
+          const request = await AdoptionService.getPendingRequestByChatId(id);
+          setAdoptionRequest(request);
+        }
       } catch (error) {
         console.error("Erro ao inicializar chat:", error);
       }
     };
 
     initializeChat();
-  }, [animalOwnerId, initiatorId, animalId, animalName]);
+  }, [animalOwnerId, initiatorId, animalId, animalName, isAnimalOwner]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -62,6 +72,17 @@ export default function ChatScreen({ route }: ChatScreenProps) {
     return () => unsubscribe();
   }, [chatId]);
 
+  useEffect(() => {
+    if (!chatId || !isAnimalOwner) return;
+
+    const checkAdoptionRequest = async () => {
+      const request = await AdoptionService.getPendingRequestByChatId(chatId);
+      setAdoptionRequest(request);
+    };
+
+    checkAdoptionRequest();
+  }, [chatId, isAnimalOwner, messages]);
+
   const sendMessage = async () => {
     if (inputText.trim() === "" || !chatId) return;
 
@@ -73,10 +94,80 @@ export default function ChatScreen({ route }: ChatScreenProps) {
         createdAt: serverTimestamp(),
       });
 
+      const recipientId = currentUserId === animalOwnerId ? initiatorId : animalOwnerId;
+
+      await NotificationService.sendPushNotification(
+        recipientId,
+        otherUserName || "Nova mensagem",
+        inputText.length > 50 ? `${inputText.substring(0, 50)}...` : inputText,
+        {
+          type: "new_message",
+          chatId,
+          animalId,
+          senderId: currentUserId,
+        }
+      );
+
       setInputText("");
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
     }
+  };
+
+  const handleAcceptAdoption = async () => {
+    if (!adoptionRequest?.id || !animalId || !chatId) return;
+
+    Alert.alert(
+      "Confirmar adoção",
+      "Tem certeza que deseja aceitar esta solicitação de adoção? O animal será transferido para o adotante e removido do catálogo.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Aceitar",
+          onPress: async () => {
+            try {
+              await AdoptionService.acceptAdoptionRequest(adoptionRequest.id!, animalId, chatId);
+              setAdoptionRequest(null);
+              Alert.alert("Sucesso", "Adoção aceita! O animal foi transferido.");
+            } catch (error: any) {
+              console.error("Erro ao aceitar adoção:", error);
+              Alert.alert("Erro", error.message || "Erro ao aceitar solicitação de adoção");
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleRejectAdoption = async () => {
+    if (!adoptionRequest?.id || !chatId) return;
+
+    Alert.alert(
+      "Recusar adoção",
+      "Tem certeza que deseja recusar esta solicitação de adoção?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Recusar",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await AdoptionService.rejectAdoptionRequest(adoptionRequest.id!, chatId, animalOwnerId);
+              setAdoptionRequest(null);
+            } catch (error: any) {
+              console.error("Erro ao recusar adoção:", error);
+              Alert.alert("Erro", error.message || "Erro ao recusar solicitação de adoção");
+            }
+          }
+        }
+      ]
+    );
   };
 
   const formatMessageTime = (timestamp: any) => {
@@ -113,6 +204,35 @@ export default function ChatScreen({ route }: ChatScreenProps) {
           </View>
         ) : (
           <>
+            {/* Botões de aceitar/recusar adoção (apenas para o dono do animal) */}
+            {isAnimalOwner && adoptionRequest && (
+              <View style={styles.adoptionButtonsContainer}>
+                <Text style={styles.adoptionRequestText}>
+                  Solicitação de adoção pendente
+                </Text>
+                <View style={styles.adoptionButtonsRow}>
+                  <View style={styles.adoptionButtonWrapper}>
+                    <Button
+                      text="Aceitar"
+                      type="oceanBlue"
+                      onPress={handleAcceptAdoption}
+                      buttonStyle={styles.adoptionButton}
+                      containerStyle={styles.adoptionButtonContainer}
+                    />
+                  </View>
+                  <View style={styles.adoptionButtonWrapper}>
+                    <Button
+                      text="Recusar"
+                      type="gray"
+                      onPress={handleRejectAdoption}
+                      buttonStyle={styles.adoptionButton}
+                      containerStyle={styles.adoptionButtonContainer}
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
+
             <FlatList
               data={messages}
               renderItem={renderItem}
@@ -198,5 +318,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#757575",
     fontFamily: "Roboto-Regular",
+  },
+  adoptionButtonsContainer: {
+    padding: 15,
+    backgroundColor: "#fff3cd",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffc107",
+  },
+  adoptionRequestText: {
+    fontSize: 14,
+    color: "#856404",
+    fontFamily: "Roboto-Medium",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  adoptionButtonsRow: {
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  adoptionButtonWrapper: {
+    flex: 1,
+    maxWidth: "45%",
+  },
+  adoptionButtonContainer: {
+    width: "100%",
+  },
+  adoptionButton: {
+    width: "100%",
   },
 });

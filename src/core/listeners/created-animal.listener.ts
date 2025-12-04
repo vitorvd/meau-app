@@ -24,7 +24,9 @@ export type Animal = {
   // Outros campos
   sobreAnimal?: string;
 
-  userId: string
+  userId: string;
+  originalOwnerId?: string; // ID do dono original (antes da adoção)
+  adopted?: boolean; // Indica se o animal foi adotado
 };
 
 const eventBus = EventBus.getEventBus()

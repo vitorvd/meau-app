@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StatusBar, StyleSheet, Text, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import LabelWithValue from "../components/LabelWithValue";
@@ -9,6 +9,8 @@ import { db } from "../config/firebaseConfig";
 import { useAuth } from "../contexts/AuthContext";
 import { Animal } from "../core/listeners/created-animal.listener";
 import { AnimalRepository } from "../core/repositories/aninal.repository";
+import { AdoptionService } from "../core/services/adoption.service";
+import { ChatService } from "../core/services/chat.service";
 
 export default function AnimalDetail() {
 	const navigation = useNavigation();
@@ -21,7 +23,6 @@ export default function AnimalDetail() {
 
 	const getBooleanIfIncluded = (array: Array<string>, value: string, trueFallback: string = "Sim", falseFallback: string = "Não") => array.includes(value) ? trueFallback : falseFallback;
 
-	// Buscar nome do dono do animal
 	useEffect(() => {
 		const fetchAnimalOwnerName = async () => {
 			if (!animal.userId) return;
@@ -41,24 +42,72 @@ export default function AnimalDetail() {
 		fetchAnimalOwnerName();
 	}, [animal.userId]);
 
-	const handleClickAdoptionButton = () => {
-		navigation.navigate("ConfirmAdoption" as never);
+	const handleClickAdoptionButton = async () => {
+		if (!user?.uid) {
+			Alert.alert("Erro", "Você precisa estar logado para solicitar adoção");
+			return;
+		}
+
+		if (user.uid === animal.userId) {
+			Alert.alert("Aviso", "Você não pode adotar seu próprio animal");
+			return;
+		}
+
+		if (!animal.id) {
+			Alert.alert("Erro", "Animal sem ID válido");
+			return;
+		}
+
+		try {
+			const chatId = await ChatService.getOrCreateChat(
+				animal.userId,
+				user.uid,
+				animal.id,
+				animal.nome
+			);
+
+			await AdoptionService.createAdoptionRequest(
+				animal.id,
+				animal.userId,
+				user.uid,
+				chatId
+			);
+
+			Alert.alert(
+				"Solicitação enviada!",
+				"Sua solicitação de adoção foi enviada ao dono do animal. Você pode acompanhar a resposta no chat.",
+				[
+					{
+						text: "OK",
+						onPress: () => {
+							(navigation as any).navigate("ChatScreen", {
+								animalOwnerId: animal.userId,
+								initiatorId: user.uid,
+								animalId: animal.id,
+								otherUserName: animalOwnerName,
+								animalName: animal.nome
+							});
+						}
+					}
+				]
+			);
+		} catch (error: any) {
+			console.error("Erro ao criar solicitação de adoção:", error);
+			Alert.alert("Erro", error.message || "Erro ao enviar solicitação de adoção");
+		}
 	}
 
 	const handleStartChat = () => {
-		// Verificar se o usuário não está tentando conversar consigo mesmo
 		if (user?.uid === animal.userId) {
 			alert("Você não pode conversar consigo mesmo!");
 			return;
 		}
 		
-		// Verificar se o animal tem ID
 		if (!animal.id) {
 			alert("Erro: Animal sem ID válido");
 			return;
 		}
 		
-		// Navegar para o chat com o dono do animal
 		(navigation as any).navigate("ChatScreen", {
 			animalOwnerId: animal.userId,
 			initiatorId: user?.uid,
@@ -92,9 +141,11 @@ export default function AnimalDetail() {
 				
 				{/* Botões de ação */}
 				<View style={styles.buttonsContainer}>
-					<Button text="Pretendo Adotar" type="yellow" onPress={handleClickAdoptionButton} />
 					{user?.uid !== animal.userId && (
-						<Button text="Iniciar Chat" type="oceanBlue" onPress={handleStartChat} />
+						<>
+							<Button text="Pretendo Adotar" type="yellow" onPress={handleClickAdoptionButton} />
+							<Button text="Iniciar Chat" type="oceanBlue" onPress={handleStartChat} />
+						</>
 					)}
 					{fromMyPets === true && (
 						<Button
